@@ -1,0 +1,9 @@
+{
+	"id": "mailru-cloud-sync",
+	"name": "Mail.ru Cloud Sync",
+	"version": "1.0.0",
+	"minAppVersion": "1.7.2",
+	"description": "Синхронизация хранилища Obsidian через Облако Mail.ru (WebDAV). Поддерживает двустороннюю синхронизацию и разрешение конфликтов.",
+	"author": "Centhron",
+	"isDesktopOnly": false
+}

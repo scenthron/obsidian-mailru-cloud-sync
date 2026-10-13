@@ -1,0 +1,29 @@
+{
+  "settings": {
+    "email": "",
+    "appPassword": "",
+    "remotePath": "/ObsidianVault",
+    "syncDirection": "bidirectional",
+    "conflictStrategy": "newer_wins",
+    "autoSyncSeconds": 60,
+    "excludePatterns": [
+      ".trash/**"
+    ],
+    "maxFileSizeMB": 50,
+    "syncOnStartup": true,
+    "concurrency": 4,
+    "scanConcurrency": 12,
+    "keepScreenOn": true,
+    "statusBarCounts": true,
+    "progressDisplay": "never",
+    "deleteConfirmThreshold": 50,
+    "language": "ru"
+  },
+  "state": {
+    "version": 2,
+    "lastSyncTime": 0,
+    "remotePath": "/ObsidianVault",
+    "revision": 0,
+    "local": {}
+  }
+}
