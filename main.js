@@ -963,7 +963,8 @@ var MailRuWebDavClient = class _MailRuWebDavClient {
     });
   }
 };
-var Mail.ruDiskClient = MailRuWebDavClient;
+var MailRuDiskClient = MailRuWebDavClient;
+var YandexDiskClient = MailRuWebDavClient;
 var YaDiskApiError = MailRuWebDavError;
 
 // src/sync-engine.ts
