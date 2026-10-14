@@ -3426,15 +3426,18 @@ var QueueView = class extends import_obsidian9.ItemView {
       });
     }
 
-    if (queue.history.length > 0) {
-      const clearBtn = buttonContainer.createEl("button", { cls: "clickable-icon" });
-      clearBtn.setAttr("title", t("queue.clearHistory"));
-      (0, import_obsidian9.setIcon)(clearBtn, "trash-2");
-      clearBtn.addEventListener("click", () => {
-        this.plugin.queue.clearHistory();
-        new import_obsidian9.Notice(t("queue.clearHistory"));
-      });
-    }
+    const clearBtn = buttonContainer.createEl("button", { cls: "clickable-icon yadisk-queue-clear-btn" });
+    clearBtn.setAttr("title", t("queue.clearHistory"));
+    clearBtn.style.display = "flex";
+    clearBtn.style.alignItems = "center";
+    clearBtn.style.justifyContent = "center";
+    clearBtn.style.padding = "4px 8px";
+    clearBtn.style.cursor = "pointer";
+    (0, import_obsidian9.setIcon)(clearBtn, "trash-2");
+    clearBtn.addEventListener("click", () => {
+      this.plugin.queue.clearHistory();
+      new import_obsidian9.Notice(t("queue.clearHistory"));
+    });
 
     const active = queue.active();
     if (active.length > 0) {
@@ -3453,14 +3456,31 @@ var QueueView = class extends import_obsidian9.ItemView {
     if (queue.history.length > 0) {
       const history = this.collapsible(el, "history", "yadisk-queue-section");
       const summary = history.summary.createDiv({ cls: "yadisk-queue-section-title" });
+      summary.style.display = "flex";
+      summary.style.alignItems = "center";
+      summary.style.justifyContent = "space-between";
+      summary.style.width = "100%";
+
+      const titleWrap = summary.createDiv();
       const title = queue.history.length >= QUEUE_HISTORY_LIMIT ? t("queue.historyLatest", { count: QUEUE_HISTORY_LIMIT }) : t("queue.historyCount", { count: queue.history.length });
-      summary.createSpan({ text: title });
+      titleWrap.createSpan({ text: title });
       const failed = queue.history.filter((entry) => entry.status === "failed").length;
       if (failed > 0)
-        summary.createSpan({ cls: "yadisk-queue-error", text: ` \xB7 ${t("queue.failedCount", { count: failed })}` });
+        titleWrap.createSpan({ cls: "yadisk-queue-error", text: ` \xB7 ${t("queue.failedCount", { count: failed })}` });
       const warningCount = queue.history.filter((entry) => entry.status === "warning").length;
       if (warningCount > 0)
-        summary.createSpan({ cls: "yadisk-queue-warning", text: ` \xB7 ${t("queue.encryptedCount", { count: warningCount })}` });
+        titleWrap.createSpan({ cls: "yadisk-queue-warning", text: ` \xB7 ${t("queue.encryptedCount", { count: warningCount })}` });
+
+      const secClearBtn = summary.createEl("button", { cls: "clickable-icon" });
+      secClearBtn.setAttr("title", t("queue.clearHistory"));
+      secClearBtn.style.marginLeft = "auto";
+      (0, import_obsidian9.setIcon)(secClearBtn, "trash-2");
+      secClearBtn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        this.plugin.queue.clearHistory();
+        new import_obsidian9.Notice(t("queue.clearHistory"));
+      });
+
       if (history.open) {
         const list = history.details.createDiv({ cls: "yadisk-queue-list" });
         for (const entry of queue.history)
