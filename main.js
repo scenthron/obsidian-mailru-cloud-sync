@@ -2605,11 +2605,11 @@ var YaDiskSyncSettingTab = class extends import_obsidian6.PluginSettingTab {
     let passphraseInputEl = null;
     let passphraseWrapperEl = null;
 
-    const passSetting = new import_obsidian6.Setting(containerEl)
+    const passphraseSetting = new import_obsidian6.Setting(containerEl)
       .setName("Секретная фраза")
       .setDesc("От 6 до 16 символов. Используется для шифрования файлов перед отправкой в облако.");
 
-    passSetting.addText((text) => {
+    passphraseSetting.addText((text) => {
       passphraseInputEl = text.inputEl;
       text.inputEl.type = "password";
       text.inputEl.maxLength = 16;
@@ -2653,7 +2653,7 @@ var YaDiskSyncSettingTab = class extends import_obsidian6.PluginSettingTab {
     });
 
     // Кнопка показать/скрыть пароль (глазик)
-    passSetting.addButton((btn) => {
+    passphraseSetting.addButton((btn) => {
       btn.setIcon("eye");
       btn.setTooltip("Показать/скрыть фразу");
       btn.onClick(() => {
@@ -2669,7 +2669,7 @@ var YaDiskSyncSettingTab = class extends import_obsidian6.PluginSettingTab {
     });
 
     // Кнопка копирования
-    passSetting.addButton((btn) => {
+    passphraseSetting.addButton((btn) => {
       btn.setIcon("copy");
       btn.setTooltip("Скопировать секретную фразу");
       btn.onClick(() => {
