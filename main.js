@@ -3909,7 +3909,7 @@ var ExportSettingsModal = class extends import_obsidian10.Modal {
     const { contentEl } = this;
     contentEl.empty();
     contentEl.createEl("h3", { text: "Экспорт настроек" });
-    contentEl.createEl("p", {
+    const promptEl = contentEl.createEl("p", {
       text: "Задайте 4-значный цифровой ПИН-код (например, 1234). Он потребуется для расшифровки настроек на другом устройстве."
     });
 
@@ -3981,7 +3981,8 @@ var ExportSettingsModal = class extends import_obsidian10.Modal {
           new import_obsidian10.Notice("Ссылка для импорта скопирована в буфер обмена!");
         });
 
-        // Скрываем форму ввода ПИН-кода
+        // Скрываем форму ввода ПИН-кода и вводную подсказку
+        promptEl.style.display = "none";
         pinSetting.settingEl.style.display = "none";
         generateBtn.style.display = "none";
         cancelBtn.setText("Закрыть");
