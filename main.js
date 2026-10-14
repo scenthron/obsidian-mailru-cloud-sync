@@ -291,7 +291,7 @@ var ru = {
   "auth.signOut": "\u0412\u044B\u0439\u0442\u0438",
   "error": "\u041E\u0448\u0438\u0431\u043A\u0430: {message}",
   "sync.heading": "\u0421\u0438\u043D\u0445\u0440\u043E\u043D\u0438\u0437\u0430\u0446\u0438\u044F",
-  "remote.name": "\u041F\u0430\u043F\u043A\u0430 \u043D\u0430 \u0414\u0438\u0441\u043A\u0435",
+  "remote.name": "Папка в Облаке Mail.ru",
   "remote.desc": "\u041F\u0440\u0438\u043C\u0435\u043D\u044F\u0435\u0442\u0441\u044F, \u043A\u043E\u0433\u0434\u0430 \u0432\u044B \u0437\u0430\u043A\u043E\u043D\u0447\u0438\u0442\u0435 \u0432\u0432\u043E\u0434. \u0414\u0440\u0443\u0433\u0430\u044F \u043F\u0430\u043F\u043A\u0430 \u0441\u0438\u043D\u0445\u0440\u043E\u043D\u0438\u0437\u0438\u0440\u0443\u0435\u0442\u0441\u044F \u043A\u0430\u043A \u0432 \u043F\u0435\u0440\u0432\u044B\u0439 \u0440\u0430\u0437, \u043F\u043E\u044D\u0442\u043E\u043C\u0443 \u0441\u043C\u0435\u043D\u0430 \u043F\u0430\u043F\u043A\u0438 \u043D\u0438\u0447\u0435\u0433\u043E \u043D\u0435 \u0443\u0434\u0430\u043B\u044F\u0435\u0442.",
   "direction.name": "\u041D\u0430\u043F\u0440\u0430\u0432\u043B\u0435\u043D\u0438\u0435",
   "direction.bidirectional": "\u0412 \u043E\u0431\u0435 \u0441\u0442\u043E\u0440\u043E\u043D\u044B",
@@ -300,7 +300,7 @@ var ru = {
   "conflict.name": "\u041F\u0440\u0438 \u043A\u043E\u043D\u0444\u043B\u0438\u043A\u0442\u0435",
   "conflict.newer": "\u041F\u043E\u0431\u0435\u0436\u0434\u0430\u0435\u0442 \u043D\u043E\u0432\u0435\u0435",
   "conflict.local": "\u041F\u043E\u0431\u0435\u0436\u0434\u0430\u0435\u0442 \u043B\u043E\u043A\u0430\u043B\u044C\u043D\u044B\u0439",
-  "conflict.remote": "\u041F\u043E\u0431\u0435\u0436\u0434\u0430\u0435\u0442 \u0441 \u0414\u0438\u0441\u043A\u0430",
+  "conflict.remote": "Побеждает из Облака",
   "conflict.ask": "\u0421\u043F\u0440\u0430\u0448\u0438\u0432\u0430\u0442\u044C",
   "deletions.name": "\u0421\u043F\u0440\u0430\u0448\u0438\u0432\u0430\u0442\u044C \u043F\u0435\u0440\u0435\u0434 \u043C\u0430\u0441\u0441\u043E\u0432\u044B\u043C \u0443\u0434\u0430\u043B\u0435\u043D\u0438\u0435\u043C",
   "deletions.desc": "Синхронизация, которая удалила бы на одной из сторон указанное или большее количество файлов будет приостановлена и запросит подтверждение действия. Такой же запрос будет запрошен при попытке удалить более четверти всех файлов в каталоге. Перемещение или переименование не учитывается.",
@@ -330,7 +330,7 @@ var ru = {
   "screen.name": "\u041D\u0435 \u0433\u0430\u0441\u0438\u0442\u044C \u044D\u043A\u0440\u0430\u043D \u043F\u0440\u0438 \u0434\u043E\u043B\u0433\u043E\u0439 \u0441\u0438\u043D\u0445\u0440\u043E\u043D\u0438\u0437\u0430\u0446\u0438\u0438",
   "screen.desc": "\u041D\u0430 iOS \u0431\u043B\u043E\u043A\u0438\u0440\u043E\u0432\u043A\u0430 \u044D\u043A\u0440\u0430\u043D\u0430 \u043F\u0440\u0438\u043E\u0441\u0442\u0430\u043D\u0430\u0432\u043B\u0438\u0432\u0430\u0435\u0442 Obsidian \u0438 \u0437\u0430\u043C\u043E\u0440\u0430\u0436\u0438\u0432\u0430\u0435\u0442 \u0441\u0438\u043D\u0445\u0440\u043E\u043D\u0438\u0437\u0430\u0446\u0438\u044E. \u042D\u0442\u0430 \u043D\u0430\u0441\u0442\u0440\u043E\u0439\u043A\u0430 \u043D\u0435 \u0434\u0430\u0451\u0442 \u044D\u043A\u0440\u0430\u043D\u0443 \u043F\u043E\u0433\u0430\u0441\u043D\u0443\u0442\u044C \u043F\u0440\u0438 \u0441\u0438\u043D\u0445\u0440\u043E\u043D\u0438\u0437\u0430\u0446\u0438\u0438 \u043E\u0442 50 \u0444\u0430\u0439\u043B\u043E\u0432; \u043A\u043E\u0440\u043E\u0442\u043A\u0438\u0435 \u043D\u0435 \u0437\u0430\u0442\u0440\u0430\u0433\u0438\u0432\u0430\u044E\u0442\u0441\u044F.",
   "fullSync.name": "\u041F\u043E\u043B\u043D\u0430\u044F \u0441\u0438\u043D\u0445\u0440\u043E\u043D\u0438\u0437\u0430\u0446\u0438\u044F",
-  "fullSync.desc": "Заново читает директорию базы данных на Mail.ru Облако и перепроверяет каждый файл хранилища, не полагаясь на сохранённое. Нужна, если изменение с другого устройства не пришло; на большом хранилище идёт долго. Кнопка синхронизации — быстрая: если Диск сообщает, что изменений нет, она его не перечитывает.",
+  "fullSync.desc": "Заново читает директорию базы данных на Mail.ru Облако и перепроверяет каждый файл хранилища, не полагаясь на сохранённое. Нужна, если изменение с другого устройства не пришло; на большом хранилище идёт долго. Кнопка синхронизации — быстрая: если Облако Mail.ru сообщает, что изменений нет, она его не перечитывает.",
   "fullSync.button": "\u0421\u0438\u043D\u0445\u0440\u043E\u043D\u0438\u0437\u0438\u0440\u043E\u0432\u0430\u0442\u044C \u043F\u043E\u043B\u043D\u043E\u0441\u0442\u044C\u044E",
   "reset.name": "\u0421\u0431\u0440\u043E\u0441\u0438\u0442\u044C \u0441\u043E\u0441\u0442\u043E\u044F\u043D\u0438\u0435 \u0441\u0438\u043D\u0445\u0440\u043E\u043D\u0438\u0437\u0430\u0446\u0438\u0438",
   "reset.desc": "\u0417\u0430\u0431\u044B\u0432\u0430\u0435\u0442, \u0447\u0442\u043E \u0431\u044B\u043B\u043E \u0441\u0438\u043D\u0445\u0440\u043E\u043D\u0438\u0437\u0438\u0440\u043E\u0432\u0430\u043D\u043E. \u0421\u043B\u0435\u0434\u0443\u044E\u0449\u0430\u044F \u0441\u0438\u043D\u0445\u0440\u043E\u043D\u0438\u0437\u0430\u0446\u0438\u044F \u0441\u0432\u0435\u0434\u0451\u0442 \u043E\u0431\u0435 \u0441\u0442\u043E\u0440\u043E\u043D\u044B, \u043D\u0438\u0447\u0435\u0433\u043E \u043D\u0435 \u0443\u0434\u0430\u043B\u044F\u044F: \u0443\u0434\u0430\u043B\u0451\u043D\u043D\u043E\u0435 \u043D\u0430 \u043E\u0434\u043D\u043E\u0439 \u0441\u0442\u043E\u0440\u043E\u043D\u0435 \u0432\u0435\u0440\u043D\u0451\u0442\u0441\u044F \u0441\u043E \u0432\u0442\u043E\u0440\u043E\u0439, \u0430 \u0440\u0430\u0437\u043B\u0438\u0447\u0430\u044E\u0449\u0438\u0435\u0441\u044F \u0444\u0430\u0439\u043B\u044B \u0441\u0442\u0430\u043D\u0443\u0442 \u043A\u043E\u043D\u0444\u043B\u0438\u043A\u0442\u0430\u043C\u0438.",
@@ -602,15 +602,6 @@ function matchesExcludePattern(path, patterns) {
   return patterns.some((p) => minimatch(path, p));
 }
 
-// src/credentials.ts
-var _a = "MDVmMDMxZWJlMTVhNGQ3M2E5MmZjNDJjMDJkNGZhOTA=";
-var _b = "NTQ2ZDdlY2VmNTE3NGQ3Njg4YjdkMjFiOGZjMjk2YTU=";
-function getClientId() {
-  return atob(_a);
-}
-function getClientSecret() {
-  return atob(_b);
-}
 
 // src/crypto-engine.ts
 var MAGIC_HEADER = new Uint8Array([79, 66, 83, 77, 82, 69, 50, 69]); // "OBSMRE2E"
@@ -760,7 +751,7 @@ var CryptoEngine = class {
     try {
       binStr = atob(b64);
     } catch (e) {
-      throw new Error("Неверный формат ссылки или повреждённые данные.");
+      throw new Error("Некорректная ссылка импорта. Убедитесь, что ссылка скопирована полностью.");
     }
     const bytes = new Uint8Array(binStr.length);
     for (let i = 0; i < binStr.length; i++) {
@@ -782,7 +773,7 @@ var CryptoEngine = class {
         ciphertext
       );
     } catch (e) {
-      throw new Error("Неверный ПИН-код! Не удалось расшифровать настройки.");
+      throw new Error("Неверный пароль ссылки! Не удалось расшифровать настройки.");
     }
 
     const dec = new TextDecoder();
@@ -2675,9 +2666,10 @@ var YaDiskSyncSettingTab = class extends import_obsidian6.PluginSettingTab {
       });
     });
 
+    const isAuthorized = !!(this.plugin.settings.email && this.plugin.settings.appPassword);
     const checkSetting = new import_obsidian6.Setting(containerEl)
       .setName("Статус подключения")
-      .setDesc(isAuthorized ? "Учётные данные указаны" : "Укажите Email и пароль для внешнего приложения");
+      .setDesc(isAuthorized ? `✓ Подключено к Облаку Mail.ru (${this.plugin.settings.email})` : "Укажите Email и пароль для внешнего приложения");
     checkSetting.addButton((btn) => {
       btn.setButtonText("Проверить подключение").setCta().onClick(async () => {
         if (!this.plugin.settings.email || !this.plugin.settings.appPassword) {
@@ -2706,6 +2698,7 @@ var YaDiskSyncSettingTab = class extends import_obsidian6.PluginSettingTab {
           this.plugin.settings.email = "";
           this.plugin.settings.appPassword = "";
           this.plugin.client.setCredentials("", "");
+          this.plugin.client.resetFolderCache();
           await this.plugin.saveSettings();
           this.display();
         });
@@ -3948,7 +3941,7 @@ var ExportSettingsModal = class extends import_obsidian10.Modal {
     cancelBtn.addEventListener("click", () => this.close());
 
     const generateBtn = footer.createEl("button", { text: "Сформировать ссылку", cls: "mod-cta" });
-    generateBtn.addEventListener("click", async () => {
+    const doExport = async () => {
       if (passVal.length < 6 || passVal.length > 16) {
         new import_obsidian10.Notice("Пароль должен содержать от 6 до 16 символов!");
         if (passInputEl) passInputEl.focus();
@@ -4007,7 +4000,16 @@ var ExportSettingsModal = class extends import_obsidian10.Modal {
         generateBtn.disabled = false;
         generateBtn.setText("Сформировать ссылку");
       }
-    });
+    };
+    generateBtn.addEventListener("click", () => void doExport());
+    if (passInputEl) {
+      passInputEl.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") {
+          e.preventDefault();
+          void doExport();
+        }
+      });
+    }
   }
   onClose() {
     this.contentEl.empty();
@@ -4086,7 +4088,7 @@ var ImportSettingsModal = class extends import_obsidian10.Modal {
     cancelBtn.addEventListener("click", () => this.close());
 
     const applyBtn = footer.createEl("button", { text: "Применить настройки", cls: "mod-cta" });
-    applyBtn.addEventListener("click", async () => {
+    const doImport = async () => {
       if (!urlVal) {
         new import_obsidian10.Notice("Пожалуйста, вставьте ссылку для импорта!");
         return;
@@ -4141,7 +4143,16 @@ var ImportSettingsModal = class extends import_obsidian10.Modal {
         applyBtn.disabled = false;
         applyBtn.setText("Применить настройки");
       }
-    });
+    };
+    applyBtn.addEventListener("click", () => void doImport());
+    if (passInputEl) {
+      passInputEl.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") {
+          e.preventDefault();
+          void doImport();
+        }
+      });
+    }
   }
   onClose() {
     this.contentEl.empty();
