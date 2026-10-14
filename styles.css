@@ -247,6 +247,11 @@
 	color: var(--text-error);
 }
 
+.yadisk-queue-row.is-warning .yadisk-queue-icon,
+.yadisk-queue-warning {
+	color: var(--text-warning, #e6a23c);
+}
+
 .yadisk-queue-body {
 	flex: 1;
 	min-width: 0;

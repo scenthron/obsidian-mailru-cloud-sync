@@ -183,6 +183,8 @@ var en = {
   "queue.historyCount": "Done ({count})",
   "queue.historyLatest": "Done \xB7 last {count}",
   "queue.failedCount": "{count} failed",
+  "queue.encryptedCount": "{count} need passphrase",
+  "queue.clearHistory": "Clear sync history",
   "queue.group.uploadNew": "Upload: new",
   "queue.group.uploadModified": "Upload: changed",
   "queue.group.downloadNew": "Download: new",
@@ -348,7 +350,7 @@ var ru = {
   "compare.rereads": "\u041F\u0435\u0440\u0435\u0447\u0438\u0442\u044B\u0432\u0430\u0435\u0442 \u041E\u0431\u043B\u0430\u043A\u043E Mail.ru \u0438 \u0445\u0440\u0430\u043D\u0438\u043B\u0438\u0449\u0435",
   "compare.rereads.full": "\u0434\u0430",
   "compare.rereads.reset": "\u0434\u0430, \u043F\u0440\u0438 \u0441\u043B\u0435\u0434\u0443\u044E\u0449\u0435\u0439",
-  "ribbon.sync": "\u0421\u0438\u043D\u0445\u0440\u043E\u043D\u0438\u0437\u0430\u0446\u0438\u044F \u0441 \u041E\u0431\u043B\u0430\u043A\u043E Mail.ru\u043E\u043C",
+  "ribbon.sync": "\u0421\u0438\u043D\u0445\u0440\u043E\u043D\u0438\u0437\u0430\u0446\u0438\u044F \u0441 \u041E\u0431\u043B\u0430\u043A\u043E Mail.ru",
   "button.sync": "\u0421\u0438\u043D\u0445\u0440\u043E\u043D\u0438\u0437\u0438\u0440\u043E\u0432\u0430\u0442\u044C \u0441\u0435\u0439\u0447\u0430\u0441",
   "phase.scanning": "\u041F\u043E\u0438\u0441\u043A \u0438\u0437\u043C\u0435\u043D\u0435\u043D\u0438\u0439",
   "phase.comparing": "\u0421\u0440\u0430\u0432\u043D\u0435\u043D\u0438\u0435",
@@ -387,6 +389,8 @@ var ru = {
   "queue.historyCount": "\u0413\u043E\u0442\u043E\u0432\u043E ({count})",
   "queue.historyLatest": "\u0413\u043E\u0442\u043E\u0432\u043E \xB7 \u043F\u043E\u0441\u043B\u0435\u0434\u043D\u0438\u0435 {count}",
   "queue.failedCount": "\u0441 \u043E\u0448\u0438\u0431\u043A\u043E\u0439: {count}",
+  "queue.encryptedCount": "\u0442\u0440\u0435\u0431\u0443\u044E\u0442 \u0444\u0440\u0430\u0437\u0443: {count}",
+  "queue.clearHistory": "\u041E\u0447\u0438\u0441\u0442\u0438\u0442\u044C \u0438\u0441\u0442\u043E\u0440\u0438\u044E",
   "queue.group.uploadNew": "\u041E\u0442\u043F\u0440\u0430\u0432\u043A\u0430: \u043D\u043E\u0432\u044B\u0435",
   "queue.group.uploadModified": "\u041E\u0442\u043F\u0440\u0430\u0432\u043A\u0430: \u0438\u0437\u043C\u0435\u043D\u0451\u043D\u043D\u044B\u0435",
   "queue.group.downloadNew": "\u0417\u0430\u0433\u0440\u0443\u0437\u043A\u0430: \u043D\u043E\u0432\u044B\u0435",
@@ -2609,6 +2613,9 @@ var YaDiskSyncSettingTab = class extends import_obsidian6.PluginSettingTab {
       .setName("Секретная фраза")
       .setDesc("От 6 до 16 символов. Используется для шифрования файлов перед отправкой в облако.");
 
+    let eyeForcedOpen = false;
+    let eyeBtnInstance = null;
+
     passphraseSetting.addText((text) => {
       passphraseInputEl = text.inputEl;
       text.inputEl.type = "password";
@@ -2632,6 +2639,12 @@ var YaDiskSyncSettingTab = class extends import_obsidian6.PluginSettingTab {
 
       updateStyle(this.plugin.settings.encryptionPassphrase || "");
 
+      // При фокусе показываем вводимый текст открыто
+      text.inputEl.addEventListener("focus", () => {
+        text.inputEl.type = "text";
+        if (eyeBtnInstance) eyeBtnInstance.setIcon("eye-off");
+      });
+
       text.onChange((val) => {
         updateStyle(val);
         if (val.length >= 6 && val.length <= 16) {
@@ -2640,7 +2653,12 @@ var YaDiskSyncSettingTab = class extends import_obsidian6.PluginSettingTab {
         }
       });
 
+      // При потере фокуса скрываем звездочками (если пользователь не нажал глазик принудительно)
       text.inputEl.addEventListener("blur", () => {
+        if (!eyeForcedOpen) {
+          text.inputEl.type = "password";
+          if (eyeBtnInstance) eyeBtnInstance.setIcon("eye");
+        }
         const val = text.inputEl.value.trim();
         if (val.length > 0 && val.length < 6) {
           new import_obsidian6.Notice("Секретная фраза должна содержать от 6 до 16 символов!");
@@ -2654,15 +2672,18 @@ var YaDiskSyncSettingTab = class extends import_obsidian6.PluginSettingTab {
 
     // Кнопка показать/скрыть пароль (глазик)
     passphraseSetting.addButton((btn) => {
+      eyeBtnInstance = btn;
       btn.setIcon("eye");
       btn.setTooltip("Показать/скрыть фразу");
       btn.onClick(() => {
         if (!passphraseInputEl) return;
         if (passphraseInputEl.type === "password") {
           passphraseInputEl.type = "text";
+          eyeForcedOpen = true;
           btn.setIcon("eye-off");
         } else {
           passphraseInputEl.type = "password";
+          eyeForcedOpen = false;
           btn.setIcon("eye");
         }
       });
@@ -2768,14 +2789,39 @@ var YaDiskSyncSettingTab = class extends import_obsidian6.PluginSettingTab {
 
           this.plugin.settings.encryptionEnabled = true;
           this.plugin.settings.encryptionPassphrase = pass;
+          // Сбрасываем удаленный снимок и ревизию, чтобы движок заново увидел все файлы и перезалил их зашифрованными
+          if (this.plugin.stateManager) {
+            const curState = this.plugin.stateManager.getState();
+            this.plugin.stateManager.setState({
+              ...curState,
+              remoteSnapshot: {},
+              revision: void 0
+            });
+          }
           await this.plugin.saveSettings();
           toggle.setValue(true);
-          new import_obsidian6.Notice("Шифрование включено! Следующая синхронизация будет зашифрована.");
+          new import_obsidian6.Notice("Шифрование включено! Запускается выгрузка зашифрованных файлов...");
+          // Автоматически запускаем синхронизацию для шифрования и выгрузки файлов в облако
+          setTimeout(() => {
+            this.plugin.syncNow();
+          }, 500);
         } else {
           this.plugin.settings.encryptionEnabled = false;
+          // При отключении шифрования также сбрасываем удаленный снимок
+          if (this.plugin.stateManager) {
+            const curState = this.plugin.stateManager.getState();
+            this.plugin.stateManager.setState({
+              ...curState,
+              remoteSnapshot: {},
+              revision: void 0
+            });
+          }
           await this.plugin.saveSettings();
           toggle.setValue(false);
-          new import_obsidian6.Notice("Шифрование отключено.");
+          new import_obsidian6.Notice("Шифрование отключено. Запускается обновление облака...");
+          setTimeout(() => {
+            this.plugin.syncNow();
+          }, 500);
         }
       });
     });
@@ -3085,12 +3131,17 @@ var SyncQueue = class {
     if (!entry || entry.status !== "active")
       return;
     this.finishedTotal++;
-    entry.status = error === void 0 ? "done" : "failed";
+    const isCryptoIssue = error && (error.includes("секретную фразу") || error.includes("зашифрован") || error.includes("расшифровки"));
+    entry.status = error === void 0 ? "done" : isCryptoIssue ? "warning" : "failed";
     entry.error = error;
     entry.finishedAt = Date.now();
     this.history.unshift({ ...entry });
     if (this.history.length > QUEUE_HISTORY_LIMIT)
       this.history.length = QUEUE_HISTORY_LIMIT;
+    this.notify();
+  }
+  clearHistory() {
+    this.history = [];
     this.notify();
   }
   /** Items not finished when a run stops are dropped: the next run plans afresh. */
@@ -3356,19 +3407,35 @@ var QueueView = class extends import_obsidian9.ItemView {
       const seconds = Math.max(0, Math.ceil((queue.nextCheckAt - Date.now()) / 1e3));
       status.createDiv({ cls: "yadisk-queue-note", text: t("queue.nextCheck", { seconds }) });
     }
+    const buttonContainer = header.createDiv({ cls: "yadisk-queue-buttons" });
+    buttonContainer.style.display = "flex";
+    buttonContainer.style.alignItems = "center";
+    buttonContainer.style.gap = "6px";
+
     if (queue.stage !== "idle") {
-      header.createEl("button", { text: t("queue.cancel") }).addEventListener("click", () => {
+      buttonContainer.createEl("button", { text: t("queue.cancel") }).addEventListener("click", () => {
         this.plugin.abortSync();
       });
     } else if (queue.paused) {
-      header.createEl("button", { text: t("queue.review"), cls: "mod-warning" }).addEventListener("click", () => {
+      buttonContainer.createEl("button", { text: t("queue.review"), cls: "mod-warning" }).addEventListener("click", () => {
         this.plugin.openPauseReview();
       });
     } else {
-      header.createEl("button", { text: t("queue.syncNow"), cls: "mod-cta" }).addEventListener("click", () => {
+      buttonContainer.createEl("button", { text: t("queue.syncNow"), cls: "mod-cta" }).addEventListener("click", () => {
         this.plugin.syncNow();
       });
     }
+
+    if (queue.history.length > 0) {
+      const clearBtn = buttonContainer.createEl("button", { cls: "clickable-icon" });
+      clearBtn.setAttr("title", t("queue.clearHistory"));
+      (0, import_obsidian9.setIcon)(clearBtn, "trash-2");
+      clearBtn.addEventListener("click", () => {
+        this.plugin.queue.clearHistory();
+        new import_obsidian9.Notice(t("queue.clearHistory"));
+      });
+    }
+
     const active = queue.active();
     if (active.length > 0) {
       this.section(el, t("queue.now", { count: active.length }), (list) => {
@@ -3391,6 +3458,9 @@ var QueueView = class extends import_obsidian9.ItemView {
       const failed = queue.history.filter((entry) => entry.status === "failed").length;
       if (failed > 0)
         summary.createSpan({ cls: "yadisk-queue-error", text: ` \xB7 ${t("queue.failedCount", { count: failed })}` });
+      const warningCount = queue.history.filter((entry) => entry.status === "warning").length;
+      if (warningCount > 0)
+        summary.createSpan({ cls: "yadisk-queue-warning", text: ` \xB7 ${t("queue.encryptedCount", { count: warningCount })}` });
       if (history.open) {
         const list = history.details.createDiv({ cls: "yadisk-queue-list" });
         for (const entry of queue.history)
@@ -3462,7 +3532,8 @@ var QueueView = class extends import_obsidian9.ItemView {
     const row = list.createDiv({ cls: `yadisk-queue-row is-${entry.status}` });
     row.setAttr("title", `${t(ACTION_LABELS[entry.action])}: ${entry.path}`);
     const icon = row.createSpan({ cls: "yadisk-queue-icon" });
-    (0, import_obsidian9.setIcon)(icon, entry.status === "failed" ? "alert-circle" : ACTION_ICONS[entry.action]);
+    const iconName = entry.status === "failed" ? "alert-circle" : entry.status === "warning" ? "lock" : ACTION_ICONS[entry.action];
+    (0, import_obsidian9.setIcon)(icon, iconName);
     const slash = entry.path.lastIndexOf("/");
     const body = row.createDiv({ cls: "yadisk-queue-body" });
     body.createDiv({ cls: "yadisk-queue-name", text: entry.path.slice(slash + 1) });
@@ -3473,8 +3544,10 @@ var QueueView = class extends import_obsidian9.ItemView {
       details.push(new Date(entry.finishedAt).toLocaleTimeString());
     if (details.length > 0)
       body.createDiv({ cls: "yadisk-queue-detail", text: details.join(" \xB7 ") });
-    if (entry.error)
-      body.createDiv({ cls: "yadisk-queue-error", text: entry.error });
+    if (entry.error) {
+      const errCls = entry.status === "warning" ? "yadisk-queue-warning" : "yadisk-queue-error";
+      body.createDiv({ cls: errCls, text: entry.error });
+    }
   }
 };
 
