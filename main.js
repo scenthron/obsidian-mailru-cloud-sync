@@ -295,10 +295,10 @@ var en = {
   "crypto.toggle.name": "Enable cloud encryption",
   "crypto.toggle.desc": "When enabled, files will be encrypted before uploading to Mail.ru Cloud.",
   "crypto.toggle.setPassFirst": "Set a secret passphrase (6 to 16 characters) first!",
-  "crypto.confirm.title": "Enable encryption",
-  "crypto.confirm.msg": "Files in Mail.ru Cloud will be encrypted. To access them from other devices, you will need to enter this same secret passphrase. Are you sure?",
+  "crypto.confirm.title": "Cloud Encryption",
+  "crypto.confirm.msg": "<b>Warning:</b> when enabling or disabling encryption, all current local files from this device will be re-uploaded to the cloud.<br><br>This is required to ensure that all your files are protected when encryption is enabled, or that all files remain accessible when encryption is disabled.<br><br>Make sure this device contains the most up-to-date version of your notes to avoid overwriting changes from other devices. Are you sure you want to proceed?",
   "crypto.confirm.cancel": "Cancel",
-  "crypto.confirm.ok": "Yes, enable",
+  "crypto.confirm.ok": "Continue",
   "crypto.notice.enabled": "Encryption enabled! Starting upload of encrypted files...",
   "crypto.notice.disabled": "Encryption disabled. Starting cloud update...",
   "transfer.heading": "Transfer settings between devices",
@@ -565,10 +565,10 @@ var ru = {
   "crypto.toggle.name": "Включить шифрование в облаке",
   "crypto.toggle.desc": "Если включено, файлы будут зашифрованы перед отправкой в Облако Mail.ru.",
   "crypto.toggle.setPassFirst": "Сначала задайте секретную фразу от 6 до 16 символов!",
-  "crypto.confirm.title": "Включение шифрования",
-  "crypto.confirm.msg": "Файлы в Облаке Mail.ru будут зашифрованы. Для доступа с других устройств вам потребуется ввести эту же секретную фразу. Вы точно уверены?",
+  "crypto.confirm.title": "Шифрование в облаке",
+  "crypto.confirm.msg": "<b>Внимание:</b> при включении/выключении шифрования все текущие локальные файлы с этого устройства будут выгружены в облако повторно.<br><br>Это необходимо, чтобы все ваши файлы были защищены в случае включения шифрования или все файлы были доступны в случае, если шифрование отключено.<br><br>Убедитесь, что на устройстве, где вы включаете/отключаете шифрование, находится самая актуальная версия ваших заметок, чтобы не перезаписать изменения с других устройств. Вы уверены, что хотите продолжить?",
   "crypto.confirm.cancel": "Отмена",
-  "crypto.confirm.ok": "Да, включить",
+  "crypto.confirm.ok": "Продолжить",
   "crypto.notice.enabled": "Шифрование включено! Запускается выгрузка зашифрованных файлов...",
   "crypto.notice.disabled": "Шифрование отключено. Запускается обновление облака...",
   "transfer.heading": "Перенос настроек между устройствами",
@@ -3021,9 +3021,8 @@ var YaDiskSyncSettingTab = class extends import_obsidian6.PluginSettingTab {
             modal.onOpen = () => {
               const { contentEl } = modal;
               contentEl.createEl("h3", { text: t("crypto.confirm.title") });
-              contentEl.createEl("p", {
-                text: t("crypto.confirm.msg")
-              });
+              const msgEl = contentEl.createEl("p");
+              msgEl.innerHTML = t("crypto.confirm.msg");
               const buttons = contentEl.createDiv({ cls: "modal-button-container" });
               buttons.style.display = "flex";
               buttons.style.justifyContent = "flex-end";
@@ -3082,6 +3081,53 @@ var YaDiskSyncSettingTab = class extends import_obsidian6.PluginSettingTab {
             void this.plugin.runSync("push", "manual", false, void 0, true, true);
           }, 500);
         } else {
+          // Показываем окно подтверждения при отключении шифрования
+          const confirmed = await new Promise((resolve) => {
+            let settled = false;
+            const modal = new import_obsidian6.Modal(this.app);
+            modal.onOpen = () => {
+              const { contentEl } = modal;
+              contentEl.createEl("h3", { text: t("crypto.confirm.title") });
+              const msgEl = contentEl.createEl("p");
+              msgEl.innerHTML = t("crypto.confirm.msg");
+              const buttons = contentEl.createDiv({ cls: "modal-button-container" });
+              buttons.style.display = "flex";
+              buttons.style.justifyContent = "flex-end";
+              buttons.style.gap = "8px";
+              buttons.style.marginTop = "16px";
+
+              const cancelBtn = buttons.createEl("button", { text: t("crypto.confirm.cancel") });
+              cancelBtn.addEventListener("click", () => {
+                if (!settled) {
+                  settled = true;
+                  resolve(false);
+                }
+                modal.close();
+              });
+
+              const okBtn = buttons.createEl("button", { text: t("crypto.confirm.ok"), cls: "mod-cta" });
+              okBtn.addEventListener("click", () => {
+                if (!settled) {
+                  settled = true;
+                  resolve(true);
+                }
+                modal.close();
+              });
+            };
+            modal.onClose = () => {
+              if (!settled) {
+                settled = true;
+                resolve(false);
+              }
+            };
+            modal.open();
+          });
+
+          if (!confirmed) {
+            toggle.setValue(true);
+            return;
+          }
+
           this.plugin.settings.encryptionEnabled = false;
           // При отключении шифрования также сбрасываем снимки для перезаливки в расшифрованном виде
           if (this.plugin.stateManager) {
