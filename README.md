@@ -97,6 +97,8 @@ To protect your files from unauthorized access:
 2. Toggle on **Enable cloud encryption** and confirm the dialog prompt.
 3. The plugin will automatically encrypt all vault files with AES-256-GCM and upload them to Mail.ru Cloud.
 
+> ⚠️ **Important:** Before enabling or disabling encryption, make sure all your devices are synchronized and this device contains the most recent version of your notes to avoid overwriting changes from other devices.
+>
 > 💡 **Tip:** Keep your secret passphrase safe! Accessing your notes from other devices requires entering the exact same passphrase (or transferring it via the export link).
 
 ---
