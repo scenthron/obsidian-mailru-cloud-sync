@@ -701,6 +701,100 @@ var CryptoEngine = class {
       throw new CryptoPassphraseError("Неверная секретная фраза для расшифровки файлов.");
     }
   }
+
+  static async exportSettingsPayload(settings, pin) {
+    const payloadObj = {
+      v: 1,
+      email: settings.email || "",
+      appPassword: settings.appPassword || "",
+      remotePath: settings.remotePath || "/ObsidianVault",
+      syncDirection: settings.syncDirection || "bidirectional",
+      conflictStrategy: settings.conflictStrategy || "newer_wins",
+      autoSyncSeconds: settings.autoSyncSeconds != null ? settings.autoSyncSeconds : 300,
+      deleteConfirmThreshold: settings.deleteConfirmThreshold != null ? settings.deleteConfirmThreshold : 50,
+      maxFileSizeMB: settings.maxFileSizeMB != null ? settings.maxFileSizeMB : 50,
+      encryptionEnabled: !!settings.encryptionEnabled,
+      encryptionPassphrase: settings.encryptionPassphrase || ""
+    };
+    const jsonStr = JSON.stringify(payloadObj);
+    const enc = new TextEncoder();
+    const dataBytes = enc.encode(jsonStr);
+
+    const salt = window.crypto.getRandomValues(new Uint8Array(16));
+    const iv = window.crypto.getRandomValues(new Uint8Array(12));
+    const key = await this.deriveKey(pin, salt);
+
+    const encrypted = await window.crypto.subtle.encrypt(
+      { name: "AES-GCM", iv },
+      key,
+      dataBytes
+    );
+
+    const total = new Uint8Array(salt.length + iv.length + encrypted.byteLength);
+    total.set(salt, 0);
+    total.set(iv, salt.length);
+    total.set(new Uint8Array(encrypted), salt.length + iv.length);
+
+    let binary = "";
+    for (let i = 0; i < total.length; i++) {
+      binary += String.fromCharCode(total[i]);
+    }
+    const b64 = btoa(binary)
+      .replace(/\+/g, "-")
+      .replace(/\//g, "_")
+      .replace(/=+$/, "");
+    return `obsidian://mailru-sync-import?data=${b64}`;
+  }
+
+  static async importSettingsPayload(rawUrlOrData, pin) {
+    let clean = rawUrlOrData.trim();
+    if (clean.includes("data=")) {
+      const match = clean.match(/data=([A-Za-z0-9\-_]+)/);
+      if (match) clean = match[1];
+    }
+    let b64 = clean.replace(/-/g, "+").replace(/_/g, "/");
+    while (b64.length % 4 !== 0) {
+      b64 += "=";
+    }
+    let binStr;
+    try {
+      binStr = atob(b64);
+    } catch (e) {
+      throw new Error("Неверный формат ссылки или повреждённые данные.");
+    }
+    const bytes = new Uint8Array(binStr.length);
+    for (let i = 0; i < binStr.length; i++) {
+      bytes[i] = binStr.charCodeAt(i);
+    }
+    if (bytes.length < 28) {
+      throw new Error("Ссылка не содержит корректных зашифрованных данных.");
+    }
+    const salt = bytes.slice(0, 16);
+    const iv = bytes.slice(16, 28);
+    const ciphertext = bytes.slice(28);
+
+    const key = await this.deriveKey(pin, salt);
+    let decryptedBytes;
+    try {
+      decryptedBytes = await window.crypto.subtle.decrypt(
+        { name: "AES-GCM", iv },
+        key,
+        ciphertext
+      );
+    } catch (e) {
+      throw new Error("Неверный ПИН-код! Не удалось расшифровать настройки.");
+    }
+
+    const dec = new TextDecoder();
+    const jsonStr = dec.decode(decryptedBytes);
+    let parsed;
+    try {
+      parsed = JSON.parse(jsonStr);
+    } catch (e) {
+      throw new Error("Ошибка чтения конфигурации настроек.");
+    }
+    return parsed;
+  }
 };
 
 // src/mailru-client.ts
@@ -2848,6 +2942,31 @@ var YaDiskSyncSettingTab = class extends import_obsidian6.PluginSettingTab {
       });
     });
 
+    // Секция экспорта и импорта настроек
+    new import_obsidian6.Setting(containerEl).setName("Перенос настроек между устройствами").setHeading();
+
+    const transferDescEl = containerEl.createDiv({ cls: "setting-item-description" });
+    transferDescEl.style.marginBottom = "12px";
+    transferDescEl.style.fontSize = "0.85em";
+    transferDescEl.style.opacity = "0.85";
+    transferDescEl.innerHTML = "Позволяет быстро перенести настройки, авторизацию и секретную фразу на другое устройство без ручного ввода. Все данные внутри ссылки надёжно зашифрованы вашим 4-значным ПИН-кодом.";
+
+    const transferSetting = new import_obsidian6.Setting(containerEl)
+      .setName("Экспорт и импорт по ссылке")
+      .setDesc("Сформируйте защищённую ссылку или примените настройки из скопированной ссылки.");
+
+    transferSetting.addButton((btn) => {
+      btn.setButtonText("Экспортировать настройки").onClick(() => {
+        new ExportSettingsModal(this.app, this.plugin).open();
+      });
+    });
+
+    transferSetting.addButton((btn) => {
+      btn.setButtonText("Импортировать настройки").onClick(() => {
+        new ImportSettingsModal(this.app, this.plugin).open();
+      });
+    });
+
     new import_obsidian6.Setting(containerEl).setName(t("sync.heading")).setHeading();
     new import_obsidian6.Setting(containerEl).setName(t("remote.name")).setDesc(t("remote.desc")).addText((text) => {
       text.setPlaceholder("/vault").setValue(this.plugin.settings.remotePath).onChange((value) => {
@@ -3777,6 +3896,224 @@ var PauseModal = class extends import_obsidian10.Modal {
     }
   }
 };
+
+var ExportSettingsModal = class extends import_obsidian10.Modal {
+  constructor(app, plugin) {
+    super(app);
+    this.plugin = plugin;
+  }
+  onOpen() {
+    const { contentEl } = this;
+    contentEl.empty();
+    contentEl.createEl("h3", { text: "Экспорт настроек" });
+    contentEl.createEl("p", {
+      text: "Задайте 4-значный цифровой ПИН-код (например, 1234). Он потребуется для расшифровки настроек на другом устройстве."
+    });
+
+    let pinVal = "";
+    const pinSetting = new import_obsidian10.Setting(contentEl)
+      .setName("ПИН-код (4 цифры)")
+      .addText((text) => {
+        text.inputEl.type = "password";
+        text.inputEl.maxLength = 4;
+        text.inputEl.style.fontSize = "1.2em";
+        text.inputEl.style.letterSpacing = "4px";
+        text.inputEl.style.textAlign = "center";
+        text.setPlaceholder("0000");
+        text.onChange((val) => {
+          pinVal = val.replace(/\D/g, "").slice(0, 4);
+          text.setValue(pinVal);
+        });
+        setTimeout(() => text.inputEl.focus(), 50);
+      });
+
+    const resultContainer = contentEl.createDiv();
+    resultContainer.style.display = "none";
+    resultContainer.style.marginTop = "16px";
+
+    const footer = contentEl.createDiv({ cls: "modal-button-container" });
+    footer.style.display = "flex";
+    footer.style.justifyContent = "flex-end";
+    footer.style.gap = "8px";
+    footer.style.marginTop = "20px";
+
+    const cancelBtn = footer.createEl("button", { text: "Отмена" });
+    cancelBtn.addEventListener("click", () => this.close());
+
+    const generateBtn = footer.createEl("button", { text: "Сформировать ссылку", cls: "mod-cta" });
+    generateBtn.addEventListener("click", async () => {
+      if (pinVal.length !== 4) {
+        new import_obsidian10.Notice("ПИН-код должен состоять ровно из 4 цифр!");
+        return;
+      }
+      try {
+        generateBtn.disabled = true;
+        generateBtn.setText("Шифрование...");
+        const url = await CryptoEngine.exportSettingsPayload(this.plugin.settings, pinVal);
+        
+        resultContainer.empty();
+        resultContainer.style.display = "block";
+
+        resultContainer.createEl("p", {
+          text: "Ссылка для переноса успешно сформирована и зашифрована вашим ПИН-кодом:"
+        });
+
+        const urlInput = resultContainer.createEl("textarea");
+        urlInput.value = url;
+        urlInput.readOnly = true;
+        urlInput.style.width = "100%";
+        urlInput.style.height = "75px";
+        urlInput.style.fontSize = "0.85em";
+        urlInput.style.resize = "none";
+        urlInput.style.marginBottom = "10px";
+        urlInput.addEventListener("click", () => urlInput.select());
+
+        const copyBtn = resultContainer.createEl("button", {
+          text: "Скопировать ссылку для импорта",
+          cls: "mod-cta"
+        });
+        copyBtn.style.width = "100%";
+        copyBtn.addEventListener("click", () => {
+          navigator.clipboard.writeText(url);
+          new import_obsidian10.Notice("Ссылка для импорта скопирована в буфер обмена!");
+        });
+
+        // Скрываем форму ввода ПИН-кода
+        pinSetting.settingEl.style.display = "none";
+        generateBtn.style.display = "none";
+        cancelBtn.setText("Закрыть");
+      } catch (err) {
+        console.error("[Mail.ru Sync] Export error:", err);
+        new import_obsidian10.Notice("Ошибка при формировании экспорта: " + (err.message || err));
+        generateBtn.disabled = false;
+        generateBtn.setText("Сформировать ссылку");
+      }
+    });
+  }
+  onClose() {
+    this.contentEl.empty();
+  }
+};
+
+var ImportSettingsModal = class extends import_obsidian10.Modal {
+  constructor(app, plugin, initialUrl = "") {
+    super(app);
+    this.plugin = plugin;
+    this.initialUrl = initialUrl;
+  }
+  onOpen() {
+    const { contentEl } = this;
+    contentEl.empty();
+    contentEl.createEl("h3", { text: "Импорт настроек" });
+    contentEl.createEl("p", {
+      text: "Вставьте полученную ссылку для импорта и введите 4-значный ПИН-код, заданный при экспорте."
+    });
+
+    let urlVal = this.initialUrl;
+    let pinVal = "";
+
+    const urlSetting = new import_obsidian10.Setting(contentEl)
+      .setName("Ссылка для импорта")
+      .addTextArea((ta) => {
+        ta.setPlaceholder("obsidian://mailru-sync-import?data=...");
+        ta.setValue(this.initialUrl);
+        ta.inputEl.style.width = "100%";
+        ta.inputEl.style.height = "75px";
+        ta.inputEl.style.fontSize = "0.85em";
+        ta.inputEl.style.resize = "none";
+        ta.onChange((val) => {
+          urlVal = val.trim();
+        });
+      });
+
+    const pinSetting = new import_obsidian10.Setting(contentEl)
+      .setName("ПИН-код (4 цифры)")
+      .addText((text) => {
+        text.inputEl.type = "password";
+        text.inputEl.maxLength = 4;
+        text.inputEl.style.fontSize = "1.2em";
+        text.inputEl.style.letterSpacing = "4px";
+        text.inputEl.style.textAlign = "center";
+        text.setPlaceholder("0000");
+        text.onChange((val) => {
+          pinVal = val.replace(/\D/g, "").slice(0, 4);
+          text.setValue(pinVal);
+        });
+        if (this.initialUrl) {
+          setTimeout(() => text.inputEl.focus(), 50);
+        }
+      });
+
+    const footer = contentEl.createDiv({ cls: "modal-button-container" });
+    footer.style.display = "flex";
+    footer.style.justifyContent = "flex-end";
+    footer.style.gap = "8px";
+    footer.style.marginTop = "20px";
+
+    const cancelBtn = footer.createEl("button", { text: "Отмена" });
+    cancelBtn.addEventListener("click", () => this.close());
+
+    const applyBtn = footer.createEl("button", { text: "Применить настройки", cls: "mod-cta" });
+    applyBtn.addEventListener("click", async () => {
+      if (!urlVal) {
+        new import_obsidian10.Notice("Пожалуйста, вставьте ссылку для импорта!");
+        return;
+      }
+      if (pinVal.length !== 4) {
+        new import_obsidian10.Notice("Введите 4-значный ПИН-код!");
+        return;
+      }
+      try {
+        applyBtn.disabled = true;
+        applyBtn.setText("Расшифровка...");
+        const imported = await CryptoEngine.importSettingsPayload(urlVal, pinVal);
+
+        if (imported.email !== void 0) this.plugin.settings.email = imported.email;
+        if (imported.appPassword !== void 0) this.plugin.settings.appPassword = imported.appPassword;
+        if (imported.remotePath !== void 0) this.plugin.settings.remotePath = imported.remotePath;
+        if (imported.syncDirection !== void 0) this.plugin.settings.syncDirection = imported.syncDirection;
+        if (imported.conflictStrategy !== void 0) this.plugin.settings.conflictStrategy = imported.conflictStrategy;
+        if (imported.autoSyncSeconds !== void 0) this.plugin.settings.autoSyncSeconds = imported.autoSyncSeconds;
+        if (imported.deleteConfirmThreshold !== void 0) this.plugin.settings.deleteConfirmThreshold = imported.deleteConfirmThreshold;
+        if (imported.maxFileSizeMB !== void 0) this.plugin.settings.maxFileSizeMB = imported.maxFileSizeMB;
+        if (imported.encryptionEnabled !== void 0) this.plugin.settings.encryptionEnabled = imported.encryptionEnabled;
+        if (imported.encryptionPassphrase !== void 0) this.plugin.settings.encryptionPassphrase = imported.encryptionPassphrase;
+
+        this.plugin.client.setCredentials(this.plugin.settings.email, this.plugin.settings.appPassword);
+        this.plugin.client.setRemotePath(this.plugin.settings.remotePath);
+        this.plugin.client.setEncryption(
+          this.plugin.settings.encryptionEnabled,
+          this.plugin.settings.encryptionMode,
+          this.plugin.settings.encryptionPassphrase
+        );
+
+        if (this.plugin.pause && this.plugin.pause.block.kind === "crypto-passphrase") {
+          this.plugin.leavePause();
+        }
+
+        await this.plugin.saveSettings();
+        this.plugin.setupAutoSync();
+
+        new import_obsidian10.Notice("Настройки успешно импортированы и применены!");
+        this.close();
+
+        // Если открыта вкладка настроек плагина — перерисовываем
+        const settingTab = this.app.setting?.activeTab;
+        if (settingTab && settingTab.plugin === this.plugin) {
+          settingTab.display();
+        }
+      } catch (err) {
+        console.error("[Mail.ru Sync] Import error:", err);
+        new import_obsidian10.Notice(err.message || "Ошибка при импорте настроек");
+        applyBtn.disabled = false;
+        applyBtn.setText("Применить настройки");
+      }
+    });
+  }
+  onClose() {
+    this.contentEl.empty();
+  }
+};
 function countVars(deletion) {
   return { count: formatCount(deletion.paths.length), total: formatCount(deletion.tracked) };
 }
@@ -3931,6 +4268,11 @@ var YaDiskSyncPlugin = class extends import_obsidian11.Plugin {
     this.updateStatusBar("idle");
     this.register(this.queue.subscribe(() => this.scheduleStatusBar()));
     this.setupAutoSync();
+    this.registerObsidianProtocolHandler("mailru-sync-import", (params) => {
+      const data = params.data || "";
+      const url = data ? `obsidian://mailru-sync-import?data=${data}` : "";
+      new ImportSettingsModal(this.app, this, url).open();
+    });
     this.registerDomEvent(document, "visibilitychange", () => {
       if (document.visibilityState !== "visible")
         return;
