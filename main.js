@@ -48,7 +48,7 @@ var DEFAULT_SETTINGS = {
   statusBarCounts: false,
   progressDisplay: "never" /* Never */,
   deleteConfirmThreshold: 50,
-  language: "auto" /* Auto */,
+  language: "en" /* English */,
   encryptionEnabled: false,
   encryptionMode: "standard",
   encryptionPassphrase: ""
@@ -267,9 +267,79 @@ var en = {
   "size.mb": "{n} MB",
   "error.localMissing": "Local file not found: {path}",
   "error.oauth": "Authorization error: {status}",
-  "error.noRefreshToken": "The sign-in has expired. Sign in again in the plugin settings.",
-  "error.tokenRefresh": "Could not renew the sign-in: {status}",
-  "error.maxRetries": "Mail.ru Cloud did not respond after several attempts"
+  "auth.email.name": "Mail.ru Email",
+  "auth.email.desc": "Email address connected to Mail.ru Cloud (e.g. user@mail.ru)",
+  "auth.pass.name": "Password for external application",
+  "auth.pass.desc": "Create a dedicated application password in Mail.ru security settings (account.mail.ru/user/2-step-auth/passwords). If compromised, immediately revoke it in your Mail.ru security cabinet and generate a new one.",
+  "auth.pass.placeholder": "Application password",
+  "auth.pass.createBtn": "Create password",
+  "auth.status.name": "Connection status",
+  "auth.status.connected": "✓ Connected to Mail.ru Cloud ({email})",
+  "auth.status.enterCreds": "Provide Email and application password",
+  "auth.checkBtn": "Check connection",
+  "auth.checking": "Checking...",
+  "auth.successNotice": "Connected to Mail.ru Cloud successfully!",
+  "auth.enterNotice": "Please enter Email and application password!",
+  "auth.clearBtn": "Clear credentials",
+  "crypto.heading": "Data Encryption (E2E)",
+  "crypto.desc": "Encryption protects files in Mail.ru Cloud from unauthorized access. <b>File contents of all types (text, audio, video, images) are encrypted</b>. Directory structure and file names remain unchanged for sync reliability. Local notes and files on your devices remain intact and unencrypted.<br><br><b>If you forget your secret passphrase:</b> simply set a new passphrase (or disable encryption) on a device with an up-to-date vault and run <i>«Full sync»</i> from plugin settings. All encrypted files in the cloud will be safely overwritten with your local files.",
+  "crypto.passphrase.name": "Secret passphrase",
+  "crypto.passphrase.desc": "6 to 16 characters. Used to encrypt files before sending to the cloud.",
+  "crypto.passphrase.placeholder": "Enter 6 to 16 characters",
+  "crypto.passphrase.toggleEye": "Show/hide passphrase",
+  "crypto.passphrase.copyBtn": "Copy secret passphrase",
+  "crypto.passphrase.copied": "Secret passphrase copied to clipboard!",
+  "crypto.passphrase.notSet": "Secret passphrase is not set",
+  "crypto.passphrase.lengthNotice": "Secret passphrase must be between 6 and 16 characters!",
+  "crypto.toggle.name": "Enable cloud encryption",
+  "crypto.toggle.desc": "When enabled, files will be encrypted before uploading to Mail.ru Cloud.",
+  "crypto.toggle.setPassFirst": "Set a secret passphrase (6 to 16 characters) first!",
+  "crypto.confirm.title": "Enable encryption",
+  "crypto.confirm.msg": "Files in Mail.ru Cloud will be encrypted. To access them from other devices, you will need to enter this same secret passphrase. Are you sure?",
+  "crypto.confirm.cancel": "Cancel",
+  "crypto.confirm.ok": "Yes, enable",
+  "crypto.notice.enabled": "Encryption enabled! Starting upload of encrypted files...",
+  "crypto.notice.disabled": "Encryption disabled. Starting cloud update...",
+  "transfer.heading": "Transfer settings between devices",
+  "transfer.desc": "Quickly transfer plugin settings, credentials, and sync parameters to another device without manual entry. All data inside the link is securely encrypted with your one-time link password.",
+  "transfer.setting.name": "Export and import via link",
+  "transfer.setting.desc": "Generate a secure link or apply settings from a copied link.",
+  "transfer.exportBtn": "Export settings",
+  "transfer.importBtn": "Import settings",
+  "exportModal.title": "Export settings",
+  "exportModal.desc": "Set an encryption password for the link (6 to 16 characters). It will be required to decrypt settings on the target device.",
+  "exportModal.passName": "Link password (6 to 16 characters)",
+  "exportModal.passPlaceholder": "Enter password",
+  "exportModal.passToggle": "Show/hide password",
+  "exportModal.cancel": "Cancel",
+  "exportModal.close": "Close",
+  "exportModal.generateBtn": "Generate link",
+  "exportModal.encrypting": "Encrypting...",
+  "exportModal.success": "Settings transfer link successfully generated:",
+  "exportModal.copyBtn": "Copy import link",
+  "exportModal.copiedNotice": "Import link copied to clipboard!",
+  "exportModal.securityAdvice": "⚠️ <b>Security recommendations:</b><br>• The stronger the password, the more secure your credentials inside the link.<br>• Transmit the link to your other device only via secure private channels, and do not send the link together with the password.<br>• We recommend deleting the link after import, or storing it in a secure password manager.",
+  "exportModal.error": "Error generating export: {message}",
+  "importModal.title": "Import settings",
+  "importModal.desc": "Paste the received import link and enter the password specified during export.",
+  "importModal.urlName": "Import link",
+  "importModal.passName": "Link password (6 to 16 characters)",
+  "importModal.passPlaceholder": "Enter password",
+  "importModal.passToggle": "Show/hide password",
+  "importModal.cancel": "Cancel",
+  "importModal.applyBtn": "Apply settings",
+  "importModal.decrypting": "Decrypting...",
+  "importModal.urlEmptyNotice": "Please paste the import link!",
+  "importModal.successNotice": "Settings successfully imported and applied!",
+  "importModal.errorNotice": "Error importing settings",
+  "cryptoEngine.corruptedLink": "Invalid import link. Make sure the link is copied completely.",
+  "cryptoEngine.invalidBytes": "Link does not contain valid encrypted data.",
+  "cryptoEngine.wrongPass": "Incorrect link password! Failed to decrypt settings.",
+  "cryptoEngine.parseError": "Error reading settings configuration.",
+  "cryptoEngine.fileEncrypted": "File is encrypted. Set secret passphrase in plugin settings.",
+  "cryptoEngine.wrongVaultPass": "Incorrect secret passphrase for file decryption.",
+  "cryptoEngine.downloadEncrypted": "Files in Mail.ru Cloud are encrypted. Enable encryption and enter the secret passphrase in settings.",
+  "cryptoEngine.cloudFolderChanged": "Folder in Mail.ru Cloud changed during scan."
 };
 var ru = {
   "language.name": "\u042F\u0437\u044B\u043A",
@@ -465,21 +535,80 @@ var ru = {
   "conflict.modified": "\u0418\u0437\u043C\u0435\u043D\u0451\u043D: {date}",
   "conflict.deleted": "\u0423\u0434\u0430\u043B\u0451\u043D",
   "conflict.keepLocal": "\u041E\u0441\u0442\u0430\u0432\u0438\u0442\u044C \u044D\u0442\u043E\u0442",
-  "conflict.keepRemote": "\u041E\u0441\u0442\u0430\u0432\u0438\u0442\u044C \u0441 \u0414\u0438\u0441\u043A\u0430",
-  "conflict.skip": "\u041F\u0440\u043E\u043F\u0443\u0441\u0442\u0438\u0442\u044C",
-  "conflict.hidden": "\u0415\u0449\u0451 {count} \u043A\u043E\u043D\u0444\u043B\u0438\u043A\u0442\u043E\u0432 \u043D\u0435 \u043F\u043E\u043A\u0430\u0437\u0430\u043D\u044B. \u0412\u044B\u0431\u0435\u0440\u0438\u0442\u0435, \u0447\u0442\u043E \u0441 \u043D\u0438\u043C\u0438 \u0441\u0434\u0435\u043B\u0430\u0442\u044C:",
-  "conflict.allLocal": "\u0412\u0441\u0435 \u043E\u0442\u0441\u044E\u0434\u0430",
-  "conflict.allRemote": "\u0412\u0441\u0435 \u0441 \u041E\u0431\u043B\u0430\u043A\u0430 Mail.ru",
-  "conflict.skipAll": "\u041F\u0440\u043E\u043F\u0443\u0441\u0442\u0438\u0442\u044C \u0432\u0441\u0435",
-  "conflict.apply": "\u041F\u0440\u0438\u043C\u0435\u043D\u0438\u0442\u044C",
-  "size.bytes": "{n} \u0411",
-  "size.kb": "{n} \u041A\u0411",
-  "size.mb": "{n} \u041C\u0411",
-  "error.localMissing": "\u041B\u043E\u043A\u0430\u043B\u044C\u043D\u044B\u0439 \u0444\u0430\u0439\u043B \u043D\u0435 \u043D\u0430\u0439\u0434\u0435\u043D: {path}",
-  "error.oauth": "\u041E\u0448\u0438\u0431\u043A\u0430 \u0430\u0432\u0442\u043E\u0440\u0438\u0437\u0430\u0446\u0438\u0438: {status}",
-  "error.noRefreshToken": "\u0412\u0445\u043E\u0434 \u0438\u0441\u0442\u0451\u043A. \u0412\u043E\u0439\u0434\u0438\u0442\u0435 \u0441\u043D\u043E\u0432\u0430 \u0432 \u043D\u0430\u0441\u0442\u0440\u043E\u0439\u043A\u0430\u0445 \u043F\u043B\u0430\u0433\u0438\u043D\u0430.",
-  "error.tokenRefresh": "\u041D\u0435 \u0443\u0434\u0430\u043B\u043E\u0441\u044C \u043F\u0440\u043E\u0434\u043B\u0438\u0442\u044C \u0432\u0445\u043E\u0434: {status}",
-  "error.maxRetries": "\u041E\u0431\u043B\u0430\u043A\u043E Mail.ru \u043D\u0435 \u043E\u0442\u0432\u0435\u0442\u0438\u043B \u043F\u043E\u0441\u043B\u0435 \u043D\u0435\u0441\u043A\u043E\u043B\u044C\u043A\u0438\u0445 \u043F\u043E\u043F\u044B\u0442\u043E\u043A"
+  "auth.email.name": "Email Mail.ru",
+  "auth.email.desc": "Почтовый ящик, к которому подключено Облако (например: user@mail.ru)",
+  "auth.pass.name": "Пароль для внешнего приложения",
+  "auth.pass.desc": "Создайте специальный пароль в настройках безопасности Mail.ru (account.mail.ru/user/2-step-auth/passwords). Если пароль был скомпрометирован, немедленно удалите его в личном кабинете Mail.ru и создайте новый.",
+  "auth.pass.placeholder": "Пароль приложения",
+  "auth.pass.createBtn": "Создать пароль",
+  "auth.status.name": "Статус подключения",
+  "auth.status.connected": "✓ Подключено к Облаку Mail.ru ({email})",
+  "auth.status.enterCreds": "Укажите Email и пароль для внешнего приложения",
+  "auth.checkBtn": "Проверить подключение",
+  "auth.checking": "Проверка...",
+  "auth.successNotice": "Подключение к Облаку Mail.ru успешно!",
+  "auth.enterNotice": "Введите Email и пароль приложения!",
+  "auth.clearBtn": "Очистить данные",
+  "crypto.heading": "Шифрование данных (E2E)",
+  "crypto.desc": "Шифрование защищает файлы в Облаке Mail.ru от посторонних глаз. <b>Зашифровано содержимое всех типов файлов (текст, аудио, видео, изображения)</b>. При этом структура, имена папок и файлов сохраняются в исходном виде и не будут зашифрованы. Локальные заметки и файлы на ваших устройствах остаются неизменными и не шифруются.<br><br><b>Если вы забыли секретную фразу:</b> просто задайте новую фразу (или выключите шифрование) на устройстве с актуальной базой данных и запустите команду <i>«Полная синхронизация»</i> из настроек плагина. Все зашифрованные файлы в облаке будут безопасно перезаписаны вашими текущими локальными файлами.",
+  "crypto.passphrase.name": "Секретная фраза",
+  "crypto.passphrase.desc": "От 6 до 16 символов. Используется для шифрования файлов перед отправкой в облако.",
+  "crypto.passphrase.placeholder": "Введите от 6 до 16 символов",
+  "crypto.passphrase.toggleEye": "Показать/скрыть фразу",
+  "crypto.passphrase.copyBtn": "Скопировать секретную фразу",
+  "crypto.passphrase.copied": "Секретная фраза скопирована в буфер обмена!",
+  "crypto.passphrase.notSet": "Секретная фраза не задана",
+  "crypto.passphrase.lengthNotice": "Секретная фраза должна содержать от 6 до 16 символов!",
+  "crypto.toggle.name": "Включить шифрование в облаке",
+  "crypto.toggle.desc": "Если включено, файлы будут зашифрованы перед отправкой в Облако Mail.ru.",
+  "crypto.toggle.setPassFirst": "Сначала задайте секретную фразу от 6 до 16 символов!",
+  "crypto.confirm.title": "Включение шифрования",
+  "crypto.confirm.msg": "Файлы в Облаке Mail.ru будут зашифрованы. Для доступа с других устройств вам потребуется ввести эту же секретную фразу. Вы точно уверены?",
+  "crypto.confirm.cancel": "Отмена",
+  "crypto.confirm.ok": "Да, включить",
+  "crypto.notice.enabled": "Шифрование включено! Запускается выгрузка зашифрованных файлов...",
+  "crypto.notice.disabled": "Шифрование отключено. Запускается обновление облака...",
+  "transfer.heading": "Перенос настроек между устройствами",
+  "transfer.desc": "Позволяет быстро перенести настройки, авторизацию и параметры синхронизации на другое устройство без ручного ввода. Все данные внутри ссылки надёжно зашифрованы вашим одноразовым паролем.",
+  "transfer.setting.name": "Экспорт и импорт по ссылке",
+  "transfer.setting.desc": "Сформируйте защищённую ссылку или примените настройки из скопированной ссылки.",
+  "transfer.exportBtn": "Экспортировать настройки",
+  "transfer.importBtn": "Импортировать настройки",
+  "exportModal.title": "Экспорт настроек",
+  "exportModal.desc": "Задайте пароль для шифрования ссылки (от 6 до 16 символов). Он потребуется для расшифровки настроек на другом устройстве.",
+  "exportModal.passName": "Пароль ссылки (от 6 до 16 символов)",
+  "exportModal.passPlaceholder": "Введите пароль",
+  "exportModal.passToggle": "Показать/скрыть пароль",
+  "exportModal.cancel": "Отмена",
+  "exportModal.close": "Закрыть",
+  "exportModal.generateBtn": "Сформировать ссылку",
+  "exportModal.encrypting": "Шифрование...",
+  "exportModal.success": "Ссылка для переноса настроек успешно сформирована:",
+  "exportModal.copyBtn": "Скопировать ссылку для импорта",
+  "exportModal.copiedNotice": "Ссылка для импорта скопирована в буфер обмена!",
+  "exportModal.securityAdvice": "⚠️ <b>Рекомендации по безопасности:</b><br>• Чем сложнее пароль, тем надёжнее защищены ваши учётные данные внутри ссылки.<br>• Передавайте ссылку на другое устройство только через приватные защищённые каналы и не передавайте ссылку вместе с секретным паролем.<br>• Рекомендуется удалить ссылку после завершения импорта настроек, либо хранить её в безопасном месте.",
+  "exportModal.error": "Ошибка при формировании экспорта: {message}",
+  "importModal.title": "Импорт настроек",
+  "importModal.desc": "Вставьте полученную ссылку для импорта и введите пароль, заданный при экспорте.",
+  "importModal.urlName": "Ссылка для импорта",
+  "importModal.passName": "Пароль ссылки (от 6 до 16 символов)",
+  "importModal.passPlaceholder": "Введите пароль",
+  "importModal.passToggle": "Показать/скрыть пароль",
+  "importModal.cancel": "Отмена",
+  "importModal.applyBtn": "Применить настройки",
+  "importModal.decrypting": "Расшифровка...",
+  "importModal.urlEmptyNotice": "Пожалуйста, вставьте ссылку для импорта!",
+  "importModal.successNotice": "Настройки успешно импортированы и применены!",
+  "importModal.errorNotice": "Ошибка при импорте настроек",
+  "cryptoEngine.corruptedLink": "Некорректная ссылка импорта. Убедитесь, что ссылка скопирована полностью.",
+  "cryptoEngine.invalidBytes": "Ссылка не содержит корректных зашифрованных данных.",
+  "cryptoEngine.wrongPass": "Неверный пароль ссылки! Не удалось расшифровать настройки.",
+  "cryptoEngine.parseError": "Ошибка чтения конфигурации настроек.",
+  "cryptoEngine.fileEncrypted": "Файл зашифрован. Задайте секретную фразу в настройках плагина.",
+  "cryptoEngine.wrongVaultPass": "Неверная секретная фраза для расшифровки файлов.",
+  "cryptoEngine.downloadEncrypted": "Файлы в Облаке Mail.ru зашифрованы. Включите шифрование и укажите секретную фразу в настройках плагина.",
+  "cryptoEngine.cloudFolderChanged": "Каталог в Облаке Mail.ru изменился во время сканирования.",
+  "conflict.keepRemote": "Оставить из Облака"
 };
 var dictionaries = { en, ru };
 var current = "en" /* English */;
@@ -671,7 +800,7 @@ var CryptoEngine = class {
       return buffer; // Не зашифрован — возвращаем как есть
     }
     if (!passphrase) {
-      throw new CryptoPassphraseError("Файл зашифрован. Задайте секретную фразу в настройках плагина.");
+      throw new CryptoPassphraseError(t("cryptoEngine.fileEncrypted"));
     }
     const saltOffset = MAGIC_HEADER.length;
     const ivOffset = saltOffset + 16;
@@ -689,7 +818,7 @@ var CryptoEngine = class {
         ciphertext
       );
     } catch (e) {
-      throw new CryptoPassphraseError("Неверная секретная фраза для расшифровки файлов.");
+      throw new CryptoPassphraseError(t("cryptoEngine.wrongVaultPass"));
     }
   }
 
@@ -751,14 +880,14 @@ var CryptoEngine = class {
     try {
       binStr = atob(b64);
     } catch (e) {
-      throw new Error("Некорректная ссылка импорта. Убедитесь, что ссылка скопирована полностью.");
+      throw new Error(t("cryptoEngine.corruptedLink"));
     }
     const bytes = new Uint8Array(binStr.length);
     for (let i = 0; i < binStr.length; i++) {
       bytes[i] = binStr.charCodeAt(i);
     }
     if (bytes.length < 28) {
-      throw new Error("Ссылка не содержит корректных зашифрованных данных.");
+      throw new Error(t("cryptoEngine.invalidBytes"));
     }
     const salt = bytes.slice(0, 16);
     const iv = bytes.slice(16, 28);
@@ -773,7 +902,7 @@ var CryptoEngine = class {
         ciphertext
       );
     } catch (e) {
-      throw new Error("Неверный пароль ссылки! Не удалось расшифровать настройки.");
+      throw new Error(t("cryptoEngine.wrongPass"));
     }
 
     const dec = new TextDecoder();
@@ -782,7 +911,7 @@ var CryptoEngine = class {
     try {
       parsed = JSON.parse(jsonStr);
     } catch (e) {
-      throw new Error("Ошибка чтения конфигурации настроек.");
+      throw new Error(t("cryptoEngine.parseError"));
     }
     return parsed;
   }
@@ -1072,7 +1201,7 @@ var MailRuWebDavClient = class _MailRuWebDavClient {
     } catch (e) {
       if (e instanceof MailRuWebDavError && e.status === 404) {
         if (!rootListed) return null;
-        throw new Error("Каталог в Облаке Mail.ru изменился во время сканирования.");
+        throw new Error(t("cryptoEngine.cloudFolderChanged"));
       }
       throw e;
     }
@@ -1158,7 +1287,7 @@ var MailRuWebDavClient = class _MailRuWebDavClient {
 
     if (CryptoEngine.isEncrypted(buffer)) {
       if (!this.encryptionEnabled || !this.encryptionPassphrase) {
-        throw new CryptoPassphraseError("Файлы в Облаке Mail.ru зашифрованы. Включите шифрование и укажите секретную фразу в настройках плагина.");
+        throw new CryptoPassphraseError(t("cryptoEngine.downloadEncrypted"));
       }
       return await CryptoEngine.decrypt(buffer, this.encryptionPassphrase);
     }
@@ -2635,8 +2764,8 @@ var YaDiskSyncSettingTab = class extends import_obsidian6.PluginSettingTab {
     const isAuthorized = !!(this.plugin.settings.email && this.plugin.settings.appPassword);
 
     const emailSetting = new import_obsidian6.Setting(containerEl)
-      .setName("Email Mail.ru")
-      .setDesc("Почтовый ящик, к которому подключено Облако (например: user@mail.ru)");
+      .setName(t("auth.email.name"))
+      .setDesc(t("auth.email.desc"));
     emailSetting.addText((text) => {
       text.setPlaceholder("user@mail.ru")
         .setValue(this.plugin.settings.email || "")
@@ -2648,11 +2777,11 @@ var YaDiskSyncSettingTab = class extends import_obsidian6.PluginSettingTab {
     });
 
     const passSetting = new import_obsidian6.Setting(containerEl)
-      .setName("Пароль для внешнего приложения")
-      .setDesc("Создайте специальный пароль в настройках безопасности Mail.ru (account.mail.ru/user/2-step-auth/passwords). Если пароль был скомпрометирован, немедленно удалите его в личном кабинете Mail.ru и создайте новый.");
+      .setName(t("auth.pass.name"))
+      .setDesc(t("auth.pass.desc"));
     passSetting.addText((text) => {
       text.inputEl.type = "password";
-      text.setPlaceholder("Пароль приложения")
+      text.setPlaceholder(t("auth.pass.placeholder"))
         .setValue(this.plugin.settings.appPassword || "")
         .onChange((val) => {
           this.plugin.settings.appPassword = val.trim();
@@ -2661,32 +2790,31 @@ var YaDiskSyncSettingTab = class extends import_obsidian6.PluginSettingTab {
         });
     });
     passSetting.addButton((btn) => {
-      btn.setButtonText("Создать пароль").onClick(() => {
+      btn.setButtonText(t("auth.pass.createBtn")).onClick(() => {
         window.open("https://account.mail.ru/user/2-step-auth/passwords");
       });
     });
 
-    const isAuthorized = !!(this.plugin.settings.email && this.plugin.settings.appPassword);
     const checkSetting = new import_obsidian6.Setting(containerEl)
-      .setName("Статус подключения")
-      .setDesc(isAuthorized ? `✓ Подключено к Облаку Mail.ru (${this.plugin.settings.email})` : "Укажите Email и пароль для внешнего приложения");
+      .setName(t("auth.status.name"))
+      .setDesc(isAuthorized ? t("auth.status.connected", { email: this.plugin.settings.email }) : t("auth.status.enterCreds"));
     checkSetting.addButton((btn) => {
-      btn.setButtonText("Проверить подключение").setCta().onClick(async () => {
+      btn.setButtonText(t("auth.checkBtn")).setCta().onClick(async () => {
         if (!this.plugin.settings.email || !this.plugin.settings.appPassword) {
-          new import_obsidian6.Notice("Введите Email и пароль приложения!");
+          new import_obsidian6.Notice(t("auth.enterNotice"));
           return;
         }
-        btn.setButtonText("Проверка...");
+        btn.setButtonText(t("auth.checking"));
         btn.buttonEl.disabled = true;
         try {
           await this.plugin.client.getDiskInfo();
-          new import_obsidian6.Notice("Подключение к Облаку Mail.ru успешно!");
+          new import_obsidian6.Notice(t("auth.successNotice"));
           await this.plugin.saveSettings();
           this.display();
         } catch (e) {
           new import_obsidian6.Notice(t("error", { message: e instanceof Error ? e.message : String(e) }));
         } finally {
-          btn.setButtonText("Проверить подключение");
+          btn.setButtonText(t("auth.checkBtn"));
           btn.buttonEl.disabled = false;
         }
       });
@@ -2694,7 +2822,7 @@ var YaDiskSyncSettingTab = class extends import_obsidian6.PluginSettingTab {
 
     if (isAuthorized) {
       checkSetting.addButton((btn) => {
-        btn.setButtonText("Очистить данные").setWarning().onClick(async () => {
+        btn.setButtonText(t("auth.clearBtn")).setWarning().onClick(async () => {
           this.plugin.settings.email = "";
           this.plugin.settings.appPassword = "";
           this.plugin.client.setCredentials("", "");
@@ -2705,20 +2833,19 @@ var YaDiskSyncSettingTab = class extends import_obsidian6.PluginSettingTab {
       });
     }
     // Секция шифрования
-    new import_obsidian6.Setting(containerEl).setName("Шифрование данных (E2E)").setHeading();
+    new import_obsidian6.Setting(containerEl).setName(t("crypto.heading")).setHeading();
 
     const descEl = containerEl.createDiv({ cls: "setting-item-description" });
     descEl.style.marginBottom = "12px";
     descEl.style.fontSize = "0.85em";
     descEl.style.opacity = "0.85";
-    descEl.innerHTML = "Шифрование защищает файлы в Облаке Mail.ru от посторонних глаз. <b>Зашифровано содержимое всех типов файлов (текст, аудио, видео, изображения)</b>. При этом структура, имена папок и файлов сохраняются в исходном виде и не будут зашифрованы. Локальные заметки и файлы на ваших устройствах остаются неизменными и не шифруются.<br><br><b>Если вы забыли секретную фразу:</b> просто задайте новую фразу (или выключите шифрование) на устройстве с актуальной базой данных и запустите команду <i>«Полная синхронизация»</i> из настроек плагина. Все зашифрованные файлы в облаке будут безопасно перезаписаны вашими текущими локальными файлами.";
+    descEl.innerHTML = t("crypto.desc");
 
     let passphraseInputEl = null;
-    let passphraseWrapperEl = null;
 
     const passphraseSetting = new import_obsidian6.Setting(containerEl)
-      .setName("Секретная фраза")
-      .setDesc("От 6 до 16 символов. Используется для шифрования файлов перед отправкой в облако.");
+      .setName(t("crypto.passphrase.name"))
+      .setDesc(t("crypto.passphrase.desc"));
 
     let eyeForcedOpen = false;
     let eyeBtnInstance = null;
@@ -2727,7 +2854,7 @@ var YaDiskSyncSettingTab = class extends import_obsidian6.PluginSettingTab {
       passphraseInputEl = text.inputEl;
       text.inputEl.type = "password";
       text.inputEl.maxLength = 16;
-      text.setPlaceholder("Введите от 6 до 16 символов")
+      text.setPlaceholder(t("crypto.passphrase.placeholder"))
         .setValue(this.plugin.settings.encryptionPassphrase || "");
 
       const updateStyle = (val) => {
@@ -2777,7 +2904,7 @@ var YaDiskSyncSettingTab = class extends import_obsidian6.PluginSettingTab {
         }
         const val = text.inputEl.value.trim();
         if (val.length > 0 && val.length < 6) {
-          new import_obsidian6.Notice("Секретная фраза должна содержать от 6 до 16 символов!");
+          new import_obsidian6.Notice(t("crypto.passphrase.lengthNotice"));
           updateStyle(val);
         } else if (val.length >= 6) {
           this.plugin.settings.encryptionPassphrase = val;
@@ -2799,7 +2926,7 @@ var YaDiskSyncSettingTab = class extends import_obsidian6.PluginSettingTab {
     passphraseSetting.addButton((btn) => {
       eyeBtnInstance = btn;
       btn.setIcon("eye");
-      btn.setTooltip("Показать/скрыть фразу");
+      btn.setTooltip(t("crypto.passphrase.toggleEye"));
       btn.onClick(() => {
         if (!passphraseInputEl) return;
         if (passphraseInputEl.type === "password") {
@@ -2817,23 +2944,23 @@ var YaDiskSyncSettingTab = class extends import_obsidian6.PluginSettingTab {
     // Кнопка копирования
     passphraseSetting.addButton((btn) => {
       btn.setIcon("copy");
-      btn.setTooltip("Скопировать секретную фразу");
+      btn.setTooltip(t("crypto.passphrase.copyBtn"));
       btn.onClick(() => {
         const val = (passphraseInputEl ? passphraseInputEl.value : "") || this.plugin.settings.encryptionPassphrase || "";
         if (!val) {
-          new import_obsidian6.Notice("Секретная фраза не задана");
+          new import_obsidian6.Notice(t("crypto.passphrase.notSet"));
           return;
         }
         navigator.clipboard.writeText(val);
-        new import_obsidian6.Notice("Секретная фраза скопирована в буфер обмена!");
+        new import_obsidian6.Notice(t("crypto.passphrase.copied"));
       });
     });
 
 
     // Тумблер включения шифрования с подтверждением
     const encToggleSetting = new import_obsidian6.Setting(containerEl)
-      .setName("Включить шифрование в облаке")
-      .setDesc("Если включено, файлы будут зашифрованы перед отправкой в Облако Mail.ru.");
+      .setName(t("crypto.toggle.name"))
+      .setDesc(t("crypto.toggle.desc"));
 
     encToggleSetting.addToggle((toggle) => {
       toggle.setValue(!!this.plugin.settings.encryptionEnabled);
@@ -2841,7 +2968,7 @@ var YaDiskSyncSettingTab = class extends import_obsidian6.PluginSettingTab {
         if (enabled) {
           const pass = (passphraseInputEl ? passphraseInputEl.value : "") || this.plugin.settings.encryptionPassphrase || "";
           if (pass.length < 6 || pass.length > 16) {
-            new import_obsidian6.Notice("Сначала задайте секретную фразу от 6 до 16 символов!");
+            new import_obsidian6.Notice(t("crypto.toggle.setPassFirst"));
             toggle.setValue(false);
             if (passphraseInputEl) {
               passphraseInputEl.focus();
@@ -2857,9 +2984,9 @@ var YaDiskSyncSettingTab = class extends import_obsidian6.PluginSettingTab {
             const modal = new import_obsidian6.Modal(this.app);
             modal.onOpen = () => {
               const { contentEl } = modal;
-              contentEl.createEl("h3", { text: "Включение шифрования" });
+              contentEl.createEl("h3", { text: t("crypto.confirm.title") });
               contentEl.createEl("p", {
-                text: "Файлы в Облаке Mail.ru будут зашифрованы. Для доступа с других устройств вам потребуется ввести эту же секретную фразу. Вы точно уверены?"
+                text: t("crypto.confirm.msg")
               });
               const buttons = contentEl.createDiv({ cls: "modal-button-container" });
               buttons.style.display = "flex";
@@ -2867,7 +2994,7 @@ var YaDiskSyncSettingTab = class extends import_obsidian6.PluginSettingTab {
               buttons.style.gap = "8px";
               buttons.style.marginTop = "16px";
 
-              const cancelBtn = buttons.createEl("button", { text: "Отмена" });
+              const cancelBtn = buttons.createEl("button", { text: t("crypto.confirm.cancel") });
               cancelBtn.addEventListener("click", () => {
                 if (!settled) {
                   settled = true;
@@ -2876,7 +3003,7 @@ var YaDiskSyncSettingTab = class extends import_obsidian6.PluginSettingTab {
                 modal.close();
               });
 
-              const okBtn = buttons.createEl("button", { text: "Да, включить", cls: "mod-cta" });
+              const okBtn = buttons.createEl("button", { text: t("crypto.confirm.ok"), cls: "mod-cta" });
               okBtn.addEventListener("click", () => {
                 if (!settled) {
                   settled = true;
@@ -2912,7 +3039,7 @@ var YaDiskSyncSettingTab = class extends import_obsidian6.PluginSettingTab {
           }
           await this.plugin.saveSettings();
           toggle.setValue(true);
-          new import_obsidian6.Notice("Шифрование включено! Запускается выгрузка зашифрованных файлов...");
+          new import_obsidian6.Notice(t("crypto.notice.enabled"));
           // Автоматически запускаем синхронизацию для шифрования и выгрузки файлов в облако
           setTimeout(() => {
             this.plugin.syncNow();
@@ -2930,7 +3057,7 @@ var YaDiskSyncSettingTab = class extends import_obsidian6.PluginSettingTab {
           }
           await this.plugin.saveSettings();
           toggle.setValue(false);
-          new import_obsidian6.Notice("Шифрование отключено. Запускается обновление облака...");
+          new import_obsidian6.Notice(t("crypto.notice.disabled"));
           setTimeout(() => {
             this.plugin.syncNow();
           }, 500);
@@ -2939,26 +3066,26 @@ var YaDiskSyncSettingTab = class extends import_obsidian6.PluginSettingTab {
     });
 
     // Секция экспорта и импорта настроек
-    new import_obsidian6.Setting(containerEl).setName("Перенос настроек между устройствами").setHeading();
+    new import_obsidian6.Setting(containerEl).setName(t("transfer.heading")).setHeading();
 
     const transferDescEl = containerEl.createDiv({ cls: "setting-item-description" });
     transferDescEl.style.marginBottom = "12px";
     transferDescEl.style.fontSize = "0.85em";
     transferDescEl.style.opacity = "0.85";
-    transferDescEl.innerHTML = "Позволяет быстро перенести настройки, авторизацию и параметры синхронизации на другое устройство без ручного ввода. Все данные внутри ссылки надёжно зашифрованы вашим одноразовым паролем.";
+    transferDescEl.innerHTML = t("transfer.desc");
 
     const transferSetting = new import_obsidian6.Setting(containerEl)
-      .setName("Экспорт и импорт по ссылке")
-      .setDesc("Сформируйте защищённую ссылку или примените настройки из скопированной ссылки.");
+      .setName(t("transfer.setting.name"))
+      .setDesc(t("transfer.setting.desc"));
 
     transferSetting.addButton((btn) => {
-      btn.setButtonText("Экспортировать настройки").onClick(() => {
+      btn.setButtonText(t("transfer.exportBtn")).onClick(() => {
         new ExportSettingsModal(this.app, this.plugin).open();
       });
     });
 
     transferSetting.addButton((btn) => {
-      btn.setButtonText("Импортировать настройки").onClick(() => {
+      btn.setButtonText(t("transfer.importBtn")).onClick(() => {
         new ImportSettingsModal(this.app, this.plugin).open();
       });
     });
@@ -3886,11 +4013,12 @@ var ExportSettingsModal = class extends import_obsidian10.Modal {
     this.plugin = plugin;
   }
   onOpen() {
+    setLanguage(this.plugin.settings.language);
     const { contentEl } = this;
     contentEl.empty();
-    contentEl.createEl("h3", { text: "Экспорт настроек" });
+    contentEl.createEl("h3", { text: t("exportModal.title") });
     const promptEl = contentEl.createEl("p", {
-      text: "Задайте пароль для шифрования ссылки (от 6 до 16 символов). Он потребуется для расшифровки настроек на другом устройстве."
+      text: t("exportModal.desc")
     });
 
     let passVal = "";
@@ -3898,12 +4026,12 @@ var ExportSettingsModal = class extends import_obsidian10.Modal {
     let eyeForcedOpen = false;
 
     const passSetting = new import_obsidian10.Setting(contentEl)
-      .setName("Пароль ссылки (от 6 до 16 символов)")
+      .setName(t("exportModal.passLabel"))
       .addText((text) => {
         passInputEl = text.inputEl;
         text.inputEl.type = "password";
         text.inputEl.maxLength = 16;
-        text.setPlaceholder("Введите пароль");
+        text.setPlaceholder(t("exportModal.passPlaceholder"));
         text.onChange((val) => {
           passVal = val.trim();
         });
@@ -3912,7 +4040,7 @@ var ExportSettingsModal = class extends import_obsidian10.Modal {
 
     passSetting.addButton((btn) => {
       btn.setIcon("eye");
-      btn.setTooltip("Показать/скрыть пароль");
+      btn.setTooltip(t("exportModal.passToggle"));
       btn.onClick(() => {
         if (!passInputEl) return;
         if (passInputEl.type === "password") {
@@ -3937,26 +4065,26 @@ var ExportSettingsModal = class extends import_obsidian10.Modal {
     footer.style.gap = "8px";
     footer.style.marginTop = "20px";
 
-    const cancelBtn = footer.createEl("button", { text: "Отмена" });
+    const cancelBtn = footer.createEl("button", { text: t("exportModal.cancel") });
     cancelBtn.addEventListener("click", () => this.close());
 
-    const generateBtn = footer.createEl("button", { text: "Сформировать ссылку", cls: "mod-cta" });
+    const generateBtn = footer.createEl("button", { text: t("exportModal.generateBtn"), cls: "mod-cta" });
     const doExport = async () => {
       if (passVal.length < 6 || passVal.length > 16) {
-        new import_obsidian10.Notice("Пароль должен содержать от 6 до 16 символов!");
+        new import_obsidian10.Notice(t("exportModal.passLengthNotice"));
         if (passInputEl) passInputEl.focus();
         return;
       }
       try {
         generateBtn.disabled = true;
-        generateBtn.setText("Шифрование...");
+        generateBtn.setText(t("exportModal.encrypting"));
         const url = await CryptoEngine.exportSettingsPayload(this.plugin.settings, passVal);
         
         resultContainer.empty();
         resultContainer.style.display = "block";
 
         resultContainer.createEl("p", {
-          text: "Ссылка для переноса настроек успешно сформирована:"
+          text: t("exportModal.successTitle")
         });
 
         const urlInput = resultContainer.createEl("textarea");
@@ -3970,13 +4098,13 @@ var ExportSettingsModal = class extends import_obsidian10.Modal {
         urlInput.addEventListener("click", () => urlInput.select());
 
         const copyBtn = resultContainer.createEl("button", {
-          text: "Скопировать ссылку для импорта",
+          text: t("exportModal.copyBtn"),
           cls: "mod-cta"
         });
         copyBtn.style.width = "100%";
         copyBtn.addEventListener("click", () => {
           navigator.clipboard.writeText(url);
-          new import_obsidian10.Notice("Ссылка для импорта скопирована в буфер обмена!");
+          new import_obsidian10.Notice(t("exportModal.copiedNotice"));
         });
 
         const warnEl = resultContainer.createDiv();
@@ -3984,21 +4112,18 @@ var ExportSettingsModal = class extends import_obsidian10.Modal {
         warnEl.style.fontSize = "0.85em";
         warnEl.style.opacity = "0.85";
         warnEl.style.lineHeight = "1.4";
-        warnEl.innerHTML = "⚠️ <b>Рекомендации по безопасности:</b><br>" +
-          "• Чем сложнее пароль, тем надёжнее защищены ваши учётные данные внутри ссылки.<br>" +
-          "• Передавайте ссылку на другое устройство только через приватные защищённые каналы и не передавайте ссылку вместе с секретным паролем.<br>" +
-          "• Рекомендуется удалить ссылку после завершения импорта настроек, либо хранить её в безопасном месте.";
+        warnEl.innerHTML = t("exportModal.securityAdvice");
 
         // Скрываем форму ввода пароля и вводную подсказку
         promptEl.style.display = "none";
         passSetting.settingEl.style.display = "none";
         generateBtn.style.display = "none";
-        cancelBtn.setText("Закрыть");
+        cancelBtn.setText(t("exportModal.closeBtn"));
       } catch (err) {
         console.error("[Mail.ru Sync] Export error:", err);
-        new import_obsidian10.Notice("Ошибка при формировании экспорта: " + (err.message || err));
+        new import_obsidian10.Notice(t("exportModal.errorNotice") + ": " + (err.message || err));
         generateBtn.disabled = false;
-        generateBtn.setText("Сформировать ссылку");
+        generateBtn.setText(t("exportModal.generateBtn"));
       }
     };
     generateBtn.addEventListener("click", () => void doExport());
@@ -4023,11 +4148,12 @@ var ImportSettingsModal = class extends import_obsidian10.Modal {
     this.initialUrl = initialUrl;
   }
   onOpen() {
+    setLanguage(this.plugin.settings.language);
     const { contentEl } = this;
     contentEl.empty();
-    contentEl.createEl("h3", { text: "Импорт настроек" });
+    contentEl.createEl("h3", { text: t("importModal.title") });
     contentEl.createEl("p", {
-      text: "Вставьте полученную ссылку для импорта и введите пароль, заданный при экспорте."
+      text: t("importModal.desc")
     });
 
     let urlVal = this.initialUrl;
@@ -4035,7 +4161,7 @@ var ImportSettingsModal = class extends import_obsidian10.Modal {
     let passInputEl = null;
 
     const urlSetting = new import_obsidian10.Setting(contentEl)
-      .setName("Ссылка для импорта")
+      .setName(t("importModal.urlLabel"))
       .addTextArea((ta) => {
         ta.setPlaceholder("obsidian://mailru-sync-import?data=...");
         ta.setValue(this.initialUrl);
@@ -4049,12 +4175,12 @@ var ImportSettingsModal = class extends import_obsidian10.Modal {
       });
 
     const passSetting = new import_obsidian10.Setting(contentEl)
-      .setName("Пароль ссылки (от 6 до 16 символов)")
+      .setName(t("importModal.passLabel"))
       .addText((text) => {
         passInputEl = text.inputEl;
         text.inputEl.type = "password";
         text.inputEl.maxLength = 16;
-        text.setPlaceholder("Введите пароль");
+        text.setPlaceholder(t("importModal.passPlaceholder"));
         text.onChange((val) => {
           passVal = val.trim();
         });
@@ -4065,7 +4191,7 @@ var ImportSettingsModal = class extends import_obsidian10.Modal {
 
     passSetting.addButton((btn) => {
       btn.setIcon("eye");
-      btn.setTooltip("Показать/скрыть пароль");
+      btn.setTooltip(t("importModal.passToggle"));
       btn.onClick(() => {
         if (!passInputEl) return;
         if (passInputEl.type === "password") {
@@ -4084,23 +4210,23 @@ var ImportSettingsModal = class extends import_obsidian10.Modal {
     footer.style.gap = "8px";
     footer.style.marginTop = "20px";
 
-    const cancelBtn = footer.createEl("button", { text: "Отмена" });
+    const cancelBtn = footer.createEl("button", { text: t("importModal.cancel") });
     cancelBtn.addEventListener("click", () => this.close());
 
-    const applyBtn = footer.createEl("button", { text: "Применить настройки", cls: "mod-cta" });
+    const applyBtn = footer.createEl("button", { text: t("importModal.applyBtn"), cls: "mod-cta" });
     const doImport = async () => {
       if (!urlVal) {
-        new import_obsidian10.Notice("Пожалуйста, вставьте ссылку для импорта!");
+        new import_obsidian10.Notice(t("importModal.urlEmptyNotice"));
         return;
       }
       if (passVal.length < 6 || passVal.length > 16) {
-        new import_obsidian10.Notice("Пароль должен содержать от 6 до 16 символов!");
+        new import_obsidian10.Notice(t("exportModal.passLengthNotice"));
         if (passInputEl) passInputEl.focus();
         return;
       }
       try {
         applyBtn.disabled = true;
-        applyBtn.setText("Расшифровка...");
+        applyBtn.setText(t("importModal.decrypting"));
         const imported = await CryptoEngine.importSettingsPayload(urlVal, passVal);
 
         if (imported.email !== void 0) this.plugin.settings.email = imported.email;
@@ -4129,7 +4255,7 @@ var ImportSettingsModal = class extends import_obsidian10.Modal {
         await this.plugin.saveSettings();
         this.plugin.setupAutoSync();
 
-        new import_obsidian10.Notice("Настройки успешно импортированы и применены!");
+        new import_obsidian10.Notice(t("importModal.successNotice"));
         this.close();
 
         // Если открыта вкладка настроек плагина — перерисовываем
@@ -4139,9 +4265,9 @@ var ImportSettingsModal = class extends import_obsidian10.Modal {
         }
       } catch (err) {
         console.error("[Mail.ru Sync] Import error:", err);
-        new import_obsidian10.Notice(err.message || "Ошибка при импорте настроек");
+        new import_obsidian10.Notice(err.message || t("importModal.errorNotice"));
         applyBtn.disabled = false;
-        applyBtn.setText("Применить настройки");
+        applyBtn.setText(t("importModal.applyBtn"));
       }
     };
     applyBtn.addEventListener("click", () => void doImport());
