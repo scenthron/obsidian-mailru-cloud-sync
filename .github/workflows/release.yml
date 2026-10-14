@@ -24,6 +24,12 @@ jobs:
             exit 1
           fi
 
+      - name: Package plugin zip archive
+        run: |
+          mkdir -p mailru-cloud-sync
+          cp main.js manifest.json styles.css mailru-cloud-sync/
+          zip -r mailru-cloud-sync.zip mailru-cloud-sync/
+
       - name: Create GitHub Release and attach assets
         uses: softprops/action-gh-release@v2
         with:
@@ -31,4 +37,5 @@ jobs:
             main.js
             manifest.json
             styles.css
+            mailru-cloud-sync.zip
           generate_release_notes: true
