@@ -3278,9 +3278,6 @@ var SyncQueue = class {
     entry.status = error === void 0 ? "done" : "failed";
     entry.error = error;
     entry.finishedAt = Date.now();
-    if (entry.status === "done") {
-      this.history = this.history.filter((h) => h.path !== item.path);
-    }
     this.history.unshift({ ...entry });
     if (this.history.length > QUEUE_HISTORY_LIMIT)
       this.history.length = QUEUE_HISTORY_LIMIT;
