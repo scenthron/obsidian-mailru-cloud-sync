@@ -2704,19 +2704,6 @@ var YaDiskSyncSettingTab = class extends import_obsidian6.PluginSettingTab {
       });
     });
 
-    // Режим шифрования
-    new import_obsidian6.Setting(containerEl)
-      .setName("Режим шифрования")
-      .setDesc("Стандартный шифрует содержимое всех файлов. Максимальный дополнительно маскирует имена файлов.")
-      .addDropdown((dd) => {
-        dd.addOption("standard", "Стандартное шифрование (по умолчанию)")
-          .addOption("max", "Максимальное шифрование (содержимое + имена)")
-          .setValue(this.plugin.settings.encryptionMode || "standard")
-          .onChange((val) => {
-            this.plugin.settings.encryptionMode = val;
-            this.plugin.queueSaveSettings();
-          });
-      });
 
     // Тумблер включения шифрования с подтверждением
     const encToggleSetting = new import_obsidian6.Setting(containerEl)
