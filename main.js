@@ -688,6 +688,8 @@ async function runPool(items, concurrency, worker, shouldStop, priority) {
             await urgent();
             continue;
           }
+          if (shouldStop && shouldStop())
+            return;
           const index = cursor++;
           if (index >= items.length)
             return;
@@ -1095,6 +1097,9 @@ var MailRuWebDavClient = class _MailRuWebDavClient {
     };
 
     for (let attempt = 0; attempt <= retries; attempt++) {
+      if (this.abortCheck && this.abortCheck()) {
+        throw new Error(t("progress.cancelling"));
+      }
       await this.waitOutCooldown();
       let response;
       try {
@@ -1797,7 +1802,8 @@ var SyncEngine = class {
         remoteSnapshot,
         localPrev,
         remotePrev,
-        direction
+        direction,
+        !!hooks.forceReencrypt
       );
       if (this.aborted)
         return this.finish(stats);
@@ -2194,7 +2200,7 @@ var SyncEngine = class {
       this.checkpointInFlight = false;
     }
   }
-  async buildPlan(localCur, remoteCur, localPrev, remotePrev, direction) {
+  async buildPlan(localCur, remoteCur, localPrev, remotePrev, direction, forceReencrypt = false) {
     const plan = [];
     const allPaths = /* @__PURE__ */ new Set([
       ...Object.keys(localCur),
@@ -2214,7 +2220,7 @@ var SyncEngine = class {
       const rCur = remoteCur[path];
       const lPrev = localPrev[path];
       const rPrev = remotePrev[path];
-      const action = this.decideSyncAction(lCur, rCur, lPrev, rPrev, direction);
+      const action = this.decideSyncAction(lCur, rCur, lPrev, rPrev, direction, forceReencrypt);
       plan.push({
         path,
         action,
@@ -2226,7 +2232,7 @@ var SyncEngine = class {
     }
     return plan;
   }
-  decideSyncAction(lCur, rCur, lPrev, rPrev, direction) {
+  decideSyncAction(lCur, rCur, lPrev, rPrev, direction, forceReencrypt = false) {
     const localExists = !!lCur;
     const remoteExists = !!rCur;
     const localExisted = !!lPrev;
@@ -2239,6 +2245,9 @@ var SyncEngine = class {
     const remoteDeleted = !remoteExists && remoteExisted;
     const localSame = localExists && localExisted && lCur.md5 === lPrev.md5;
     const remoteSame = remoteExists && remoteExisted && rCur.md5 === rPrev.md5;
+    if (forceReencrypt && localExists) {
+      return remoteExists ? "upload_modified" /* UploadModified */ : "upload_new" /* UploadNew */;
+    }
     if (localExists && remoteExists && lCur.md5 === rCur.md5) {
       return "skip" /* Skip */;
     }
@@ -3055,11 +3064,12 @@ var YaDiskSyncSettingTab = class extends import_obsidian6.PluginSettingTab {
 
           this.plugin.settings.encryptionEnabled = true;
           this.plugin.settings.encryptionPassphrase = pass;
-          // Сбрасываем удаленный снимок и ревизию, чтобы движок заново увидел все файлы и перезалил их зашифрованными
+          // Сбрасываем снимки и ревизию, чтобы движок заново увидел все файлы и перезалил их зашифрованными
           if (this.plugin.stateManager) {
             const curState = this.plugin.stateManager.getState();
             this.plugin.stateManager.setState({
               ...curState,
+              localSnapshot: {},
               remoteSnapshot: {},
               revision: void 0
             });
@@ -3067,17 +3077,18 @@ var YaDiskSyncSettingTab = class extends import_obsidian6.PluginSettingTab {
           await this.plugin.saveSettings();
           toggle.setValue(true);
           new import_obsidian6.Notice(t("crypto.notice.enabled"));
-          // Автоматически запускаем синхронизацию для шифрования и выгрузки файлов в облако
+          // Автоматически запускаем принудительную выгрузку зашифрованных файлов в облако
           setTimeout(() => {
-            this.plugin.syncNow();
+            void this.plugin.runSync("push", "manual", false, void 0, true, true);
           }, 500);
         } else {
           this.plugin.settings.encryptionEnabled = false;
-          // При отключении шифрования также сбрасываем удаленный снимок
+          // При отключении шифрования также сбрасываем снимки для перезаливки в расшифрованном виде
           if (this.plugin.stateManager) {
             const curState = this.plugin.stateManager.getState();
             this.plugin.stateManager.setState({
               ...curState,
+              localSnapshot: {},
               remoteSnapshot: {},
               revision: void 0
             });
@@ -3086,7 +3097,7 @@ var YaDiskSyncSettingTab = class extends import_obsidian6.PluginSettingTab {
           toggle.setValue(false);
           new import_obsidian6.Notice(t("crypto.notice.disabled"));
           setTimeout(() => {
-            this.plugin.syncNow();
+            void this.plugin.runSync("push", "manual", false, void 0, true, true);
           }, 500);
         }
       });
@@ -4802,7 +4813,7 @@ var YaDiskSyncPlugin = class extends import_obsidian11.Plugin {
     void this.runSync(void 0, "manual", false, void 0, true);
     (_a2 = this.currentProgress) == null ? void 0 : _a2.reopen();
   }
-  async runSync(directionOverride, trigger = "manual", remoteUnchangedHint, decision, full = false) {
+  async runSync(directionOverride, trigger = "manual", remoteUnchangedHint, decision, full = false, forceReencrypt = false) {
     if (this.syncInProgress) {
       if (trigger === "manual")
         this.showSyncStatus();
@@ -4850,7 +4861,7 @@ var YaDiskSyncPlugin = class extends import_obsidian11.Plugin {
         reporter: progress,
         queue: this.queue,
         checkpoint: () => this.saveSettings(),
-        remoteUnchanged,
+        remoteUnchanged: forceReencrypt ? false : remoteUnchanged,
         onPlanReady: (total) => {
           if (total >= WAKE_LOCK_MIN_ITEMS)
             void this.acquireWakeLock();
@@ -4859,7 +4870,8 @@ var YaDiskSyncPlugin = class extends import_obsidian11.Plugin {
         checkStorage: () => this.vaultStorageAvailable(),
         approvedDeletions: decision == null ? void 0 : decision.approve,
         restorePaths: decision == null ? void 0 : decision.restore,
-        rehashLocal: full
+        rehashLocal: full,
+        forceReencrypt
       });
       if (stats.blocked) {
         keepWaiting();
