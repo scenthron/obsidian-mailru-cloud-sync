@@ -5,7 +5,7 @@
     "remotePath": "/ObsidianVault",
     "syncDirection": "bidirectional",
     "conflictStrategy": "newer_wins",
-    "autoSyncSeconds": 60,
+    "autoSyncSeconds": 300,
     "excludePatterns": [
       ".trash/**"
     ],
