@@ -2658,7 +2658,7 @@ var YaDiskSyncSettingTab = class extends import_obsidian6.PluginSettingTab {
 
     const passSetting = new import_obsidian6.Setting(containerEl)
       .setName("Пароль для внешнего приложения")
-      .setDesc("Создайте специальный пароль в настройках безопасности Mail.ru (account.mail.ru/user/2-step-auth/passwords)");
+      .setDesc("Создайте специальный пароль в настройках безопасности Mail.ru (account.mail.ru/user/2-step-auth/passwords). Если пароль был скомпрометирован, немедленно удалите его в личном кабинете Mail.ru и создайте новый.");
     passSetting.addText((text) => {
       text.inputEl.type = "password";
       text.setPlaceholder("Пароль приложения")
@@ -2952,7 +2952,7 @@ var YaDiskSyncSettingTab = class extends import_obsidian6.PluginSettingTab {
     transferDescEl.style.marginBottom = "12px";
     transferDescEl.style.fontSize = "0.85em";
     transferDescEl.style.opacity = "0.85";
-    transferDescEl.innerHTML = "Позволяет быстро перенести настройки, авторизацию и секретную фразу на другое устройство без ручного ввода. Все данные внутри ссылки надёжно зашифрованы вашим 4-значным ПИН-кодом.";
+    transferDescEl.innerHTML = "Позволяет быстро перенести настройки, авторизацию и параметры синхронизации на другое устройство без ручного ввода. Все данные внутри ссылки надёжно зашифрованы вашим одноразовым паролем.";
 
     const transferSetting = new import_obsidian6.Setting(containerEl)
       .setName("Экспорт и импорт по ссылке")
@@ -3897,25 +3897,42 @@ var ExportSettingsModal = class extends import_obsidian10.Modal {
     contentEl.empty();
     contentEl.createEl("h3", { text: "Экспорт настроек" });
     const promptEl = contentEl.createEl("p", {
-      text: "Задайте 4-значный цифровой ПИН-код (например, 1234). Он потребуется для расшифровки настроек на другом устройстве."
+      text: "Задайте пароль для шифрования ссылки (от 6 до 16 символов). Он потребуется для расшифровки настроек на другом устройстве."
     });
 
-    let pinVal = "";
-    const pinSetting = new import_obsidian10.Setting(contentEl)
-      .setName("ПИН-код (4 цифры)")
+    let passVal = "";
+    let passInputEl = null;
+    let eyeForcedOpen = false;
+
+    const passSetting = new import_obsidian10.Setting(contentEl)
+      .setName("Пароль ссылки (от 6 до 16 символов)")
       .addText((text) => {
+        passInputEl = text.inputEl;
         text.inputEl.type = "password";
-        text.inputEl.maxLength = 4;
-        text.inputEl.style.fontSize = "1.2em";
-        text.inputEl.style.letterSpacing = "4px";
-        text.inputEl.style.textAlign = "center";
-        text.setPlaceholder("0000");
+        text.inputEl.maxLength = 16;
+        text.setPlaceholder("Введите пароль");
         text.onChange((val) => {
-          pinVal = val.replace(/\D/g, "").slice(0, 4);
-          text.setValue(pinVal);
+          passVal = val.trim();
         });
         setTimeout(() => text.inputEl.focus(), 50);
       });
+
+    passSetting.addButton((btn) => {
+      btn.setIcon("eye");
+      btn.setTooltip("Показать/скрыть пароль");
+      btn.onClick(() => {
+        if (!passInputEl) return;
+        if (passInputEl.type === "password") {
+          passInputEl.type = "text";
+          eyeForcedOpen = true;
+          btn.setIcon("eye-off");
+        } else {
+          passInputEl.type = "password";
+          eyeForcedOpen = false;
+          btn.setIcon("eye");
+        }
+      });
+    });
 
     const resultContainer = contentEl.createDiv();
     resultContainer.style.display = "none";
@@ -3932,14 +3949,15 @@ var ExportSettingsModal = class extends import_obsidian10.Modal {
 
     const generateBtn = footer.createEl("button", { text: "Сформировать ссылку", cls: "mod-cta" });
     generateBtn.addEventListener("click", async () => {
-      if (pinVal.length !== 4) {
-        new import_obsidian10.Notice("ПИН-код должен состоять ровно из 4 цифр!");
+      if (passVal.length < 6 || passVal.length > 16) {
+        new import_obsidian10.Notice("Пароль должен содержать от 6 до 16 символов!");
+        if (passInputEl) passInputEl.focus();
         return;
       }
       try {
         generateBtn.disabled = true;
         generateBtn.setText("Шифрование...");
-        const url = await CryptoEngine.exportSettingsPayload(this.plugin.settings, pinVal);
+        const url = await CryptoEngine.exportSettingsPayload(this.plugin.settings, passVal);
         
         resultContainer.empty();
         resultContainer.style.display = "block";
@@ -3968,9 +3986,19 @@ var ExportSettingsModal = class extends import_obsidian10.Modal {
           new import_obsidian10.Notice("Ссылка для импорта скопирована в буфер обмена!");
         });
 
-        // Скрываем форму ввода ПИН-кода и вводную подсказку
+        const warnEl = resultContainer.createDiv();
+        warnEl.style.marginTop = "14px";
+        warnEl.style.fontSize = "0.85em";
+        warnEl.style.opacity = "0.85";
+        warnEl.style.lineHeight = "1.4";
+        warnEl.innerHTML = "⚠️ <b>Рекомендации по безопасности:</b><br>" +
+          "• Чем сложнее пароль, тем надёжнее защищены ваши учётные данные внутри ссылки.<br>" +
+          "• Передавайте ссылку на другое устройство только через приватные защищённые каналы (например, избранное в защищённом мессенджере).<br>" +
+          "• Обязательно удалите ссылку и переписку после завершения импорта настроек.";
+
+        // Скрываем форму ввода пароля и вводную подсказку
         promptEl.style.display = "none";
-        pinSetting.settingEl.style.display = "none";
+        passSetting.settingEl.style.display = "none";
         generateBtn.style.display = "none";
         cancelBtn.setText("Закрыть");
       } catch (err) {
@@ -3997,11 +4025,12 @@ var ImportSettingsModal = class extends import_obsidian10.Modal {
     contentEl.empty();
     contentEl.createEl("h3", { text: "Импорт настроек" });
     contentEl.createEl("p", {
-      text: "Вставьте полученную ссылку для импорта и введите 4-значный ПИН-код, заданный при экспорте."
+      text: "Вставьте полученную ссылку для импорта и введите пароль, заданный при экспорте."
     });
 
     let urlVal = this.initialUrl;
-    let pinVal = "";
+    let passVal = "";
+    let passInputEl = null;
 
     const urlSetting = new import_obsidian10.Setting(contentEl)
       .setName("Ссылка для импорта")
@@ -4017,23 +4046,35 @@ var ImportSettingsModal = class extends import_obsidian10.Modal {
         });
       });
 
-    const pinSetting = new import_obsidian10.Setting(contentEl)
-      .setName("ПИН-код (4 цифры)")
+    const passSetting = new import_obsidian10.Setting(contentEl)
+      .setName("Пароль ссылки (от 6 до 16 символов)")
       .addText((text) => {
+        passInputEl = text.inputEl;
         text.inputEl.type = "password";
-        text.inputEl.maxLength = 4;
-        text.inputEl.style.fontSize = "1.2em";
-        text.inputEl.style.letterSpacing = "4px";
-        text.inputEl.style.textAlign = "center";
-        text.setPlaceholder("0000");
+        text.inputEl.maxLength = 16;
+        text.setPlaceholder("Введите пароль");
         text.onChange((val) => {
-          pinVal = val.replace(/\D/g, "").slice(0, 4);
-          text.setValue(pinVal);
+          passVal = val.trim();
         });
         if (this.initialUrl) {
           setTimeout(() => text.inputEl.focus(), 50);
         }
       });
+
+    passSetting.addButton((btn) => {
+      btn.setIcon("eye");
+      btn.setTooltip("Показать/скрыть пароль");
+      btn.onClick(() => {
+        if (!passInputEl) return;
+        if (passInputEl.type === "password") {
+          passInputEl.type = "text";
+          btn.setIcon("eye-off");
+        } else {
+          passInputEl.type = "password";
+          btn.setIcon("eye");
+        }
+      });
+    });
 
     const footer = contentEl.createDiv({ cls: "modal-button-container" });
     footer.style.display = "flex";
@@ -4050,14 +4091,15 @@ var ImportSettingsModal = class extends import_obsidian10.Modal {
         new import_obsidian10.Notice("Пожалуйста, вставьте ссылку для импорта!");
         return;
       }
-      if (pinVal.length !== 4) {
-        new import_obsidian10.Notice("Введите 4-значный ПИН-код!");
+      if (passVal.length < 6 || passVal.length > 16) {
+        new import_obsidian10.Notice("Пароль должен содержать от 6 до 16 символов!");
+        if (passInputEl) passInputEl.focus();
         return;
       }
       try {
         applyBtn.disabled = true;
         applyBtn.setText("Расшифровка...");
-        const imported = await CryptoEngine.importSettingsPayload(urlVal, pinVal);
+        const imported = await CryptoEngine.importSettingsPayload(urlVal, passVal);
 
         if (imported.email !== void 0) this.plugin.settings.email = imported.email;
         if (imported.appPassword !== void 0) this.plugin.settings.appPassword = imported.appPassword;
