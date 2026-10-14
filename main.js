@@ -35,7 +35,7 @@ var DEFAULT_SETTINGS = {
   appPassword: "",
   remotePath: "/ObsidianVault",
   syncDirection: "bidirectional" /* Bidirectional */,
-  conflictStrategy: "newer_wins" /* NewerWins */,
+  conflictStrategy: "ask" /* Ask */,
   autoSyncSeconds: 300,
   excludePatterns: [
     ".trash/**"
