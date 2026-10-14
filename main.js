@@ -3020,12 +3020,17 @@ var YaDiskSyncSettingTab = class extends import_obsidian6.PluginSettingTab {
       .setName(t("crypto.toggle.name"))
       .setDesc(t("crypto.toggle.desc"));
 
+    let isHandlingToggle = false;
+
     encToggleSetting.addToggle((toggle) => {
       encToggleComponent = toggle;
       toggle.setValue(!!this.plugin.settings.encryptionEnabled);
       updateToggleState(this.plugin.settings.encryptionPassphrase || "");
 
       toggle.onChange(async (enabled) => {
+        if (isHandlingToggle) return;
+        isHandlingToggle = true;
+        try {
         if (enabled) {
           const pass = (passphraseInputEl ? passphraseInputEl.value : "") || this.plugin.settings.encryptionPassphrase || "";
           if (pass.length < 6 || pass.length > 16) {
@@ -3172,6 +3177,9 @@ var YaDiskSyncSettingTab = class extends import_obsidian6.PluginSettingTab {
           setTimeout(() => {
             void this.plugin.runSync("push", "manual", false, void 0, true, true);
           }, 500);
+        }
+        } finally {
+          isHandlingToggle = false;
         }
       });
     });
