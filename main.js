@@ -209,9 +209,9 @@ var en = {
   "pause.notice.massBoth": "Sync paused: files went missing both here and on Mail.ru Cloud. Nothing was deleted.",
   "pause.notice.massLocal": "Sync paused: {count} of {total} files are missing from this vault. Nothing was deleted on Mail.ru Cloud.",
   "pause.notice.massRemote": "Sync paused: {count} of {total} files were removed from Mail.ru Cloud. Nothing was deleted in this vault.",
-  "pause.notice.cryptoPassphrase": "Sync paused: files in the cloud are encrypted, but the passphrase is not set or does not match. Auto-sync is paused.",
-  "pause.cryptoPassphrase.what": "Files in Mail.ru Cloud are encrypted, but the secret passphrase is missing or incorrect.",
-  "pause.cryptoPassphrase.todo": "Set the correct secret passphrase in plugin settings to continue syncing.",
+  "pause.notice.cryptoPassphrase": "Sync paused: files in the cloud are encrypted. Enable encryption and set the secret passphrase in settings.",
+  "pause.cryptoPassphrase.what": "Files in Mail.ru Cloud are encrypted, but encryption is disabled or the secret passphrase does not match.",
+  "pause.cryptoPassphrase.todo": "Enable encryption and set the correct secret passphrase in plugin settings to continue syncing.",
   "pause.openSettings": "Encryption settings",
   "pause.storage.what": "The vault folder can't be read. Was the drive it is on disconnected?",
   "pause.storage.todo": "Reconnect the drive and restart Obsidian. The sync picks up where it left off.",
@@ -419,9 +419,9 @@ var ru = {
   "pause.notice.massBoth": "\u0421\u0438\u043D\u0445\u0440\u043E\u043D\u0438\u0437\u0430\u0446\u0438\u044F \u043D\u0430 \u043F\u0430\u0443\u0437\u0435: \u0444\u0430\u0439\u043B\u044B \u043F\u0440\u043E\u043F\u0430\u043B\u0438 \u0438 \u0437\u0434\u0435\u0441\u044C, \u0438 \u043D\u0430 \u041E\u0431\u043B\u0430\u043A\u0435 Mail.ru. \u041D\u0438\u0447\u0435\u0433\u043E \u043D\u0435 \u0443\u0434\u0430\u043B\u0435\u043D\u043E.",
   "pause.notice.massLocal": "\u0421\u0438\u043D\u0445\u0440\u043E\u043D\u0438\u0437\u0430\u0446\u0438\u044F \u043D\u0430 \u043F\u0430\u0443\u0437\u0435: \u0438\u0437 \u0445\u0440\u0430\u043D\u0438\u043B\u0438\u0449\u0430 \u043F\u0440\u043E\u043F\u0430\u043B\u0438 {count} \u0438\u0437 {total} \u0444\u0430\u0439\u043B\u043E\u0432. \u041D\u0430 \u041E\u0431\u043B\u0430\u043A\u0435 Mail.ru \u043D\u0438\u0447\u0435\u0433\u043E \u043D\u0435 \u0443\u0434\u0430\u043B\u0435\u043D\u043E.",
   "pause.notice.massRemote": "\u0421\u0438\u043D\u0445\u0440\u043E\u043D\u0438\u0437\u0430\u0446\u0438\u044F \u043D\u0430 \u043F\u0430\u0443\u0437\u0435: \u0441 \u041E\u0431\u043B\u0430\u043A\u0430 Mail.ru \u0443\u0434\u0430\u043B\u0435\u043D\u044B {count} \u0438\u0437 {total} \u0444\u0430\u0439\u043B\u043E\u0432. \u0412 \u0445\u0440\u0430\u043D\u0438\u043B\u0438\u0449\u0435 \u043D\u0438\u0447\u0435\u0433\u043E \u043D\u0435 \u0443\u0434\u0430\u043B\u0435\u043D\u043E.",
-  "pause.notice.cryptoPassphrase": "\u0421\u0438\u043D\u0445\u0440\u043E\u043D\u0438\u0437\u0430\u0446\u0438\u044F \u043D\u0430 \u043F\u0430\u0443\u0437\u0435: \u0444\u0430\u0439\u043B\u044B \u0432 \u043E\u0431\u043B\u0430\u043A\u0435 \u0437\u0430\u0448\u0438\u0444\u0440\u043E\u0432\u0430\u043D\u044B, \u0430 \u0441\u0435\u043A\u0440\u0435\u0442\u043D\u0430\u044F \u0444\u0440\u0430\u0437\u0430 \u043D\u0435 \u0437\u0430\u0434\u0430\u043D\u0430 \u0438\u043B\u0438 \u043D\u0435 \u0441\u043E\u0432\u043F\u0430\u0434\u0430\u0435\u0442. \u0410\u0432\u0442\u043E\u0441\u0438\u043D\u0445\u0440\u043E\u043D\u0438\u0437\u0430\u0446\u0438\u044F \u043F\u0440\u0438\u043E\u0441\u0442\u0430\u043D\u043E\u0432\u043B\u0435\u043D\u0430.",
-  "pause.cryptoPassphrase.what": "\u0424\u0430\u0439\u043B\u044B \u0432 \u041E\u0431\u043B\u0430\u043A\u0435 Mail.ru \u0437\u0430\u0448\u0438\u0444\u0440\u043E\u0432\u0430\u043D\u044B, \u043D\u043E \u0441\u0435\u043A\u0440\u0435\u0442\u043D\u0430\u044F \u0444\u0440\u0430\u0437\u0430 \u043D\u0435 \u0437\u0430\u0434\u0430\u043D\u0430 \u0438\u043B\u0438 \u043D\u0435 \u0441\u043E\u0432\u043F\u0430\u0434\u0430\u0435\u0442.",
-  "pause.cryptoPassphrase.todo": "\u0423\u0441\u0442\u0430\u043D\u043E\u0432\u0438\u0442\u0435 \u043A\u043E\u0440\u0440\u0435\u043A\u0442\u043D\u0443\u044E \u0441\u0435\u043A\u0440\u0435\u0442\u043D\u0443\u044E \u0444\u0440\u0430\u0437\u0443 \u0432 \u043D\u0430\u0441\u0442\u0440\u043E\u0439\u043A\u0430\u0445 \u043F\u043B\u0430\u0433\u0438\u043D\u0430, \u0447\u0442\u043E\u0431\u044B \u043F\u0440\u043E\u0434\u043E\u043B\u0436\u0438\u0442\u044C \u0441\u0438\u043D\u0445\u0440\u043E\u043D\u0438\u0437\u0430\u0446\u0438\u044E.",
+  "pause.notice.cryptoPassphrase": "Синхронизация на паузе: файлы в облаке зашифрованы. Включите шифрование и укажите секретную фразу в настройках плагина.",
+  "pause.cryptoPassphrase.what": "Файлы в Облаке Mail.ru зашифрованы, но на этом устройстве шифрование выключено или секретная фраза не совпадает.",
+  "pause.cryptoPassphrase.todo": "Включите шифрование и укажите корректную секретную фразу в настройках плагина, чтобы продолжить синхронизацию.",
   "pause.openSettings": "\u041D\u0430\u0441\u0442\u0440\u043E\u0439\u043A\u0438 \u0448\u0438\u0444\u0440\u043E\u0432\u0430\u043D\u0438\u044F",
   "pause.storage.what": "\u041F\u0430\u043F\u043A\u0430 \u0445\u0440\u0430\u043D\u0438\u043B\u0438\u0449\u0430 \u043D\u0435 \u0447\u0438\u0442\u0430\u0435\u0442\u0441\u044F. \u0412\u043E\u0437\u043C\u043E\u0436\u043D\u043E, \u0434\u0438\u0441\u043A, \u043D\u0430 \u043A\u043E\u0442\u043E\u0440\u043E\u043C \u043E\u043D\u0430 \u043B\u0435\u0436\u0438\u0442, \u043E\u0442\u043A\u043B\u044E\u0447\u0451\u043D?",
   "pause.storage.todo": "\u041F\u043E\u0434\u043A\u043B\u044E\u0447\u0438\u0442\u0435 \u0434\u0438\u0441\u043A \u0438 \u043F\u0435\u0440\u0435\u0437\u0430\u043F\u0443\u0441\u0442\u0438\u0442\u0435 Obsidian. \u0421\u0438\u043D\u0445\u0440\u043E\u043D\u0438\u0437\u0430\u0446\u0438\u044F \u043F\u0440\u043E\u0434\u043E\u043B\u0436\u0438\u0442\u0441\u044F \u0441 \u0442\u043E\u0433\u043E \u043C\u0435\u0441\u0442\u0430, \u0433\u0434\u0435 \u043E\u0441\u0442\u0430\u043D\u043E\u0432\u0438\u043B\u0430\u0441\u044C.",
@@ -1166,6 +1166,9 @@ var MailRuWebDavClient = class _MailRuWebDavClient {
     const buffer = resp.arrayBuffer;
 
     if (CryptoEngine.isEncrypted(buffer)) {
+      if (!this.encryptionEnabled || !this.encryptionPassphrase) {
+        throw new CryptoPassphraseError("Файлы в Облаке Mail.ru зашифрованы. Включите шифрование и укажите секретную фразу в настройках плагина.");
+      }
       return await CryptoEngine.decrypt(buffer, this.encryptionPassphrase);
     }
     return buffer;
@@ -2766,7 +2769,7 @@ var YaDiskSyncSettingTab = class extends import_obsidian6.PluginSettingTab {
             val
           );
           this.plugin.queueSaveSettings();
-          if (this.plugin.pause && this.plugin.pause.block.kind === "crypto-passphrase") {
+          if (this.plugin.pause && this.plugin.pause.block.kind === "crypto-passphrase" && this.plugin.settings.encryptionEnabled) {
             this.plugin.leavePause();
             void this.plugin.syncNow();
           }
@@ -2791,7 +2794,7 @@ var YaDiskSyncSettingTab = class extends import_obsidian6.PluginSettingTab {
             val
           );
           this.plugin.queueSaveSettings();
-          if (this.plugin.pause && this.plugin.pause.block.kind === "crypto-passphrase") {
+          if (this.plugin.pause && this.plugin.pause.block.kind === "crypto-passphrase" && this.plugin.settings.encryptionEnabled) {
             this.plugin.leavePause();
             void this.plugin.syncNow();
           }
