@@ -2720,6 +2720,7 @@ var YaDiskSyncSettingTab = class extends import_obsidian6.PluginSettingTab {
 
           // Показываем окно подтверждения
           const confirmed = await new Promise((resolve) => {
+            let settled = false;
             const modal = new import_obsidian6.Modal(this.app);
             modal.onOpen = () => {
               const { contentEl } = modal;
@@ -2735,19 +2736,27 @@ var YaDiskSyncSettingTab = class extends import_obsidian6.PluginSettingTab {
 
               const cancelBtn = buttons.createEl("button", { text: "Отмена" });
               cancelBtn.addEventListener("click", () => {
+                if (!settled) {
+                  settled = true;
+                  resolve(false);
+                }
                 modal.close();
-                resolve(false);
               });
 
               const okBtn = buttons.createEl("button", { text: "Да, включить", cls: "mod-cta" });
               okBtn.addEventListener("click", () => {
+                if (!settled) {
+                  settled = true;
+                  resolve(true);
+                }
                 modal.close();
-                resolve(true);
               });
             };
             modal.onClose = () => {
-              // если закрыли крестиком
-              resolve(false);
+              if (!settled) {
+                settled = true;
+                resolve(false);
+              }
             };
             modal.open();
           });
@@ -2760,10 +2769,12 @@ var YaDiskSyncSettingTab = class extends import_obsidian6.PluginSettingTab {
           this.plugin.settings.encryptionEnabled = true;
           this.plugin.settings.encryptionPassphrase = pass;
           await this.plugin.saveSettings();
+          toggle.setValue(true);
           new import_obsidian6.Notice("Шифрование включено! Следующая синхронизация будет зашифрована.");
         } else {
           this.plugin.settings.encryptionEnabled = false;
           await this.plugin.saveSettings();
+          toggle.setValue(false);
           new import_obsidian6.Notice("Шифрование отключено.");
         }
       });
