@@ -2878,6 +2878,26 @@ var YaDiskSyncSettingTab = class extends import_obsidian6.PluginSettingTab {
     descEl.innerHTML = t("crypto.desc");
 
     let passphraseInputEl = null;
+    let encToggleComponent = null;
+
+    const updateToggleState = (passVal) => {
+      const isValid = passVal && passVal.length >= 6 && passVal.length <= 16;
+      if (encToggleComponent) {
+        if (!this.plugin.settings.encryptionEnabled) {
+          encToggleComponent.setDisabled(!isValid);
+          if (encToggleComponent.toggleEl) {
+            encToggleComponent.toggleEl.style.opacity = isValid ? "1" : "0.5";
+            encToggleComponent.toggleEl.style.cursor = isValid ? "pointer" : "not-allowed";
+          }
+        } else {
+          encToggleComponent.setDisabled(false);
+          if (encToggleComponent.toggleEl) {
+            encToggleComponent.toggleEl.style.opacity = "1";
+            encToggleComponent.toggleEl.style.cursor = "pointer";
+          }
+        }
+      }
+    };
 
     const passphraseSetting = new import_obsidian6.Setting(containerEl)
       .setName(t("crypto.passphrase.name"))
@@ -2917,6 +2937,7 @@ var YaDiskSyncSettingTab = class extends import_obsidian6.PluginSettingTab {
 
       text.onChange((val) => {
         updateStyle(val);
+        updateToggleState(val);
         if (val.length >= 6 && val.length <= 16) {
           this.plugin.settings.encryptionPassphrase = val;
           this.plugin.client.setEncryption(
@@ -2939,6 +2960,7 @@ var YaDiskSyncSettingTab = class extends import_obsidian6.PluginSettingTab {
           if (eyeBtnInstance) eyeBtnInstance.setIcon("eye");
         }
         const val = text.inputEl.value.trim();
+        updateToggleState(val);
         if (val.length > 0 && val.length < 6) {
           new import_obsidian6.Notice(t("crypto.passphrase.lengthNotice"));
           updateStyle(val);
@@ -2999,13 +3021,17 @@ var YaDiskSyncSettingTab = class extends import_obsidian6.PluginSettingTab {
       .setDesc(t("crypto.toggle.desc"));
 
     encToggleSetting.addToggle((toggle) => {
+      encToggleComponent = toggle;
       toggle.setValue(!!this.plugin.settings.encryptionEnabled);
+      updateToggleState(this.plugin.settings.encryptionPassphrase || "");
+
       toggle.onChange(async (enabled) => {
         if (enabled) {
           const pass = (passphraseInputEl ? passphraseInputEl.value : "") || this.plugin.settings.encryptionPassphrase || "";
           if (pass.length < 6 || pass.length > 16) {
             new import_obsidian6.Notice(t("crypto.toggle.setPassFirst"));
             toggle.setValue(false);
+            updateToggleState(pass);
             if (passphraseInputEl) {
               passphraseInputEl.focus();
               passphraseInputEl.style.borderColor = "var(--text-error, #e53935)";
@@ -3141,6 +3167,7 @@ var YaDiskSyncSettingTab = class extends import_obsidian6.PluginSettingTab {
           }
           await this.plugin.saveSettings();
           toggle.setValue(false);
+          updateToggleState((passphraseInputEl ? passphraseInputEl.value : "") || this.plugin.settings.encryptionPassphrase || "");
           new import_obsidian6.Notice(t("crypto.notice.disabled"));
           setTimeout(() => {
             void this.plugin.runSync("push", "manual", false, void 0, true, true);
