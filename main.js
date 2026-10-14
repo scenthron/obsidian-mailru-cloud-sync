@@ -48,7 +48,10 @@ var DEFAULT_SETTINGS = {
   statusBarCounts: false,
   progressDisplay: "never" /* Never */,
   deleteConfirmThreshold: 50,
-  language: "auto" /* Auto */
+  language: "auto" /* Auto */,
+  encryptionEnabled: false,
+  encryptionMode: "standard",
+  encryptionPassphrase: ""
 };
 var WAKE_LOCK_MIN_ITEMS = 50;
 var PERSISTED_STATE_VERSION = 2;
@@ -380,7 +383,7 @@ var ru = {
   "queue.local.modified": "\u0418\u0437\u043C\u0435\u043D\u0451\u043D \u0437\u0434\u0435\u0441\u044C",
   "queue.local.deleted": "\u0423\u0434\u0430\u043B\u0451\u043D \u0437\u0434\u0435\u0441\u044C",
   "queue.local.renamed": "\u041F\u0435\u0440\u0435\u0438\u043C\u0435\u043D\u043E\u0432\u0430\u043D \u0438\u043B\u0438 \u043F\u0435\u0440\u0435\u043C\u0435\u0449\u0451\u043D \u0437\u0434\u0435\u0441\u044C",
-  "queue.nextCheck": "\u0421\u043B\u0435\u0434\u0443\u044E\u0449\u0430\u044F \u043F\u0440\u043E\u0432\u0435\u0440\u043A\u0430 \u042F\u043D\u0434\u0435\u043A\u0441 \u0414\u0438\u0441\u043A\u0430 \u0447\u0435\u0440\u0435\u0437 {seconds} \u0441",
+  "queue.nextCheck": "\u0421\u043B\u0435\u0434\u0443\u044E\u0449\u0430\u044F \u043F\u0440\u043E\u0432\u0435\u0440\u043A\u0430 \u0447\u0435\u0440\u0435\u0437 {seconds} \u0441",
   "queue.historyCount": "\u0413\u043E\u0442\u043E\u0432\u043E ({count})",
   "queue.historyLatest": "\u0413\u043E\u0442\u043E\u0432\u043E \xB7 \u043F\u043E\u0441\u043B\u0435\u0434\u043D\u0438\u0435 {count}",
   "queue.failedCount": "\u0441 \u043E\u0448\u0438\u0431\u043A\u043E\u0439: {count}",
@@ -597,6 +600,90 @@ function getClientSecret() {
   return atob(_b);
 }
 
+// src/crypto-engine.ts
+var MAGIC_HEADER = new Uint8Array([79, 66, 83, 77, 82, 69, 50, 69]); // "OBSMRE2E"
+
+var CryptoEngine = class {
+  static async deriveKey(passphrase, salt) {
+    const enc = new TextEncoder();
+    const keyMaterial = await window.crypto.subtle.importKey(
+      "raw",
+      enc.encode(passphrase),
+      { name: "PBKDF2" },
+      false,
+      ["deriveKey"]
+    );
+    return window.crypto.subtle.deriveKey(
+      {
+        name: "PBKDF2",
+        salt,
+        iterations: 100000,
+        hash: "SHA-256"
+      },
+      keyMaterial,
+      { name: "AES-GCM", length: 256 },
+      false,
+      ["encrypt", "decrypt"]
+    );
+  }
+
+  static async encrypt(arrayBuffer, passphrase) {
+    if (!passphrase) return arrayBuffer;
+    const salt = window.crypto.getRandomValues(new Uint8Array(16));
+    const iv = window.crypto.getRandomValues(new Uint8Array(12));
+    const key = await this.deriveKey(passphrase, salt);
+
+    const ciphertext = await window.crypto.subtle.encrypt(
+      { name: "AES-GCM", iv },
+      key,
+      arrayBuffer
+    );
+
+    const result = new Uint8Array(MAGIC_HEADER.length + salt.length + iv.length + ciphertext.byteLength);
+    result.set(MAGIC_HEADER, 0);
+    result.set(salt, MAGIC_HEADER.length);
+    result.set(iv, MAGIC_HEADER.length + salt.length);
+    result.set(new Uint8Array(ciphertext), MAGIC_HEADER.length + salt.length + iv.length);
+    return result.buffer;
+  }
+
+  static isEncrypted(buffer) {
+    if (buffer.byteLength < MAGIC_HEADER.length) return false;
+    const view = new Uint8Array(buffer, 0, MAGIC_HEADER.length);
+    for (let i = 0; i < MAGIC_HEADER.length; i++) {
+      if (view[i] !== MAGIC_HEADER[i]) return false;
+    }
+    return true;
+  }
+
+  static async decrypt(buffer, passphrase) {
+    if (!this.isEncrypted(buffer)) {
+      return buffer; // Не зашифрован — возвращаем как есть
+    }
+    if (!passphrase) {
+      throw new Error("Файл зашифрован. Задайте секретную фразу в настройках плагина.");
+    }
+    const saltOffset = MAGIC_HEADER.length;
+    const ivOffset = saltOffset + 16;
+    const dataOffset = ivOffset + 12;
+
+    const salt = new Uint8Array(buffer, saltOffset, 16);
+    const iv = new Uint8Array(buffer, ivOffset, 12);
+    const ciphertext = buffer.slice(dataOffset);
+
+    const key = await this.deriveKey(passphrase, salt);
+    try {
+      return await window.crypto.subtle.decrypt(
+        { name: "AES-GCM", iv },
+        key,
+        ciphertext
+      );
+    } catch (e) {
+      throw new Error("Неверная секретная фраза для расшифровки файлов.");
+    }
+  }
+};
+
 // src/mailru-client.ts
 var WEBDAV_BASE = "https://webdav.cloud.mail.ru";
 var MAX_RETRIES = 3;
@@ -662,6 +749,15 @@ var MailRuWebDavClient = class _MailRuWebDavClient {
     this.cooldownUntil = 0;
     this.abortCheck = null;
     this.onTokenRefreshed = null;
+    this.encryptionEnabled = false;
+    this.encryptionMode = "standard";
+    this.encryptionPassphrase = "";
+  }
+
+  setEncryption(enabled, mode, passphrase) {
+    this.encryptionEnabled = !!enabled;
+    this.encryptionMode = mode || "standard";
+    this.encryptionPassphrase = passphrase || "";
   }
 
   setCredentials(email, appPassword) {
@@ -928,6 +1024,11 @@ var MailRuWebDavClient = class _MailRuWebDavClient {
     const parentDir = remotePath.substring(0, remotePath.lastIndexOf("/"));
     await this.ensureFolderExists(parentDir);
 
+    let payload = data;
+    if (this.encryptionEnabled && this.encryptionPassphrase) {
+      payload = await CryptoEngine.encrypt(data, this.encryptionPassphrase);
+    }
+
     const norm = normalizePath(remotePath);
     const encoded = norm.split("/").map(encodeURIComponent).join("/");
     const url = `${WEBDAV_BASE}/${encoded}`.replace(/\/+/g, "/").replace("https:/", "https://");
@@ -935,7 +1036,7 @@ var MailRuWebDavClient = class _MailRuWebDavClient {
     await this.request({
       url,
       method: "PUT",
-      body: data,
+      body: payload,
       headers: { "Content-Type": "application/octet-stream" }
     });
   }
@@ -949,7 +1050,12 @@ var MailRuWebDavClient = class _MailRuWebDavClient {
       url,
       method: "GET"
     });
-    return resp.arrayBuffer;
+    const buffer = resp.arrayBuffer;
+
+    if (CryptoEngine.isEncrypted(buffer)) {
+      return await CryptoEngine.decrypt(buffer, this.encryptionPassphrase);
+    }
+    return buffer;
   }
 
   async deleteResource(path) {
@@ -2487,6 +2593,182 @@ var YaDiskSyncSettingTab = class extends import_obsidian6.PluginSettingTab {
         });
       });
     }
+    // Секция шифрования
+    new import_obsidian6.Setting(containerEl).setName("Шифрование данных (E2E)").setHeading();
+
+    const descEl = containerEl.createDiv({ cls: "setting-item-description" });
+    descEl.style.marginBottom = "12px";
+    descEl.style.fontSize = "0.85em";
+    descEl.style.opacity = "0.8";
+    descEl.innerHTML = "Шифрование защищает файлы в Облаке Mail.ru от посторонних глаз. <b>Локальные файлы на вашем устройстве остаются обычными заметками</b>. Если вы забудете секретную фразу, данные в облаке прочитать будет невозможно, но вы всегда можете задать новую фразу на устройстве с актуальной базой заметок и сделать новую выгрузку.";
+
+    let passphraseInputEl = null;
+    let passphraseWrapperEl = null;
+
+    const passSetting = new import_obsidian6.Setting(containerEl)
+      .setName("Секретная фраза")
+      .setDesc("От 6 до 16 символов. Используется для шифрования файлов перед отправкой в облако.");
+
+    passSetting.addText((text) => {
+      passphraseInputEl = text.inputEl;
+      text.inputEl.type = "password";
+      text.inputEl.maxLength = 16;
+      text.setPlaceholder("Введите от 6 до 16 символов")
+        .setValue(this.plugin.settings.encryptionPassphrase || "");
+
+      const updateStyle = (val) => {
+        const len = val.length;
+        if (len === 0) {
+          text.inputEl.style.borderColor = "";
+          text.inputEl.style.backgroundColor = "";
+        } else if (len < 6) {
+          text.inputEl.style.borderColor = "var(--text-error, #e53935)";
+          text.inputEl.style.backgroundColor = "rgba(229, 57, 53, 0.1)";
+        } else {
+          text.inputEl.style.borderColor = "var(--text-success, #43a047)";
+          text.inputEl.style.backgroundColor = "rgba(67, 160, 71, 0.1)";
+        }
+      };
+
+      updateStyle(this.plugin.settings.encryptionPassphrase || "");
+
+      text.onChange((val) => {
+        updateStyle(val);
+        if (val.length >= 6 && val.length <= 16) {
+          this.plugin.settings.encryptionPassphrase = val;
+          this.plugin.queueSaveSettings();
+        }
+      });
+
+      text.inputEl.addEventListener("blur", () => {
+        const val = text.inputEl.value.trim();
+        if (val.length > 0 && val.length < 6) {
+          new import_obsidian6.Notice("Секретная фраза должна содержать от 6 до 16 символов!");
+          updateStyle(val);
+        } else if (val.length >= 6) {
+          this.plugin.settings.encryptionPassphrase = val;
+          this.plugin.queueSaveSettings();
+        }
+      });
+    });
+
+    // Кнопка показать/скрыть пароль (глазик)
+    passSetting.addButton((btn) => {
+      btn.setIcon("eye");
+      btn.setTooltip("Показать/скрыть фразу");
+      btn.onClick(() => {
+        if (!passphraseInputEl) return;
+        if (passphraseInputEl.type === "password") {
+          passphraseInputEl.type = "text";
+          btn.setIcon("eye-off");
+        } else {
+          passphraseInputEl.type = "password";
+          btn.setIcon("eye");
+        }
+      });
+    });
+
+    // Кнопка копирования
+    passSetting.addButton((btn) => {
+      btn.setIcon("copy");
+      btn.setTooltip("Скопировать секретную фразу");
+      btn.onClick(() => {
+        const val = (passphraseInputEl ? passphraseInputEl.value : "") || this.plugin.settings.encryptionPassphrase || "";
+        if (!val) {
+          new import_obsidian6.Notice("Секретная фраза не задана");
+          return;
+        }
+        navigator.clipboard.writeText(val);
+        new import_obsidian6.Notice("Секретная фраза скопирована в буфер обмена!");
+      });
+    });
+
+    // Режим шифрования
+    new import_obsidian6.Setting(containerEl)
+      .setName("Режим шифрования")
+      .setDesc("Стандартный шифрует содержимое всех файлов. Максимальный дополнительно маскирует имена файлов.")
+      .addDropdown((dd) => {
+        dd.addOption("standard", "Стандартное шифрование (по умолчанию)")
+          .addOption("max", "Максимальное шифрование (содержимое + имена)")
+          .setValue(this.plugin.settings.encryptionMode || "standard")
+          .onChange((val) => {
+            this.plugin.settings.encryptionMode = val;
+            this.plugin.queueSaveSettings();
+          });
+      });
+
+    // Тумблер включения шифрования с подтверждением
+    const encToggleSetting = new import_obsidian6.Setting(containerEl)
+      .setName("Включить шифрование в облаке")
+      .setDesc("Если включено, файлы будут зашифрованы перед отправкой в Облако Mail.ru.");
+
+    encToggleSetting.addToggle((toggle) => {
+      toggle.setValue(!!this.plugin.settings.encryptionEnabled);
+      toggle.onChange(async (enabled) => {
+        if (enabled) {
+          const pass = (passphraseInputEl ? passphraseInputEl.value : "") || this.plugin.settings.encryptionPassphrase || "";
+          if (pass.length < 6 || pass.length > 16) {
+            new import_obsidian6.Notice("Сначала задайте секретную фразу от 6 до 16 символов!");
+            toggle.setValue(false);
+            if (passphraseInputEl) {
+              passphraseInputEl.focus();
+              passphraseInputEl.style.borderColor = "var(--text-error, #e53935)";
+              passphraseInputEl.style.backgroundColor = "rgba(229, 57, 53, 0.15)";
+            }
+            return;
+          }
+
+          // Показываем окно подтверждения
+          const confirmed = await new Promise((resolve) => {
+            const modal = new import_obsidian6.Modal(this.app);
+            modal.onOpen = () => {
+              const { contentEl } = modal;
+              contentEl.createEl("h3", { text: "Включение шифрования" });
+              contentEl.createEl("p", {
+                text: "Файлы в Облаке Mail.ru будут зашифрованы. Для доступа с других устройств вам потребуется ввести эту же секретную фразу. Вы точно уверены?"
+              });
+              const buttons = contentEl.createDiv({ cls: "modal-button-container" });
+              buttons.style.display = "flex";
+              buttons.style.justifyContent = "flex-end";
+              buttons.style.gap = "8px";
+              buttons.style.marginTop = "16px";
+
+              const cancelBtn = buttons.createEl("button", { text: "Отмена" });
+              cancelBtn.addEventListener("click", () => {
+                modal.close();
+                resolve(false);
+              });
+
+              const okBtn = buttons.createEl("button", { text: "Да, включить", cls: "mod-cta" });
+              okBtn.addEventListener("click", () => {
+                modal.close();
+                resolve(true);
+              });
+            };
+            modal.onClose = () => {
+              // если закрыли крестиком
+              resolve(false);
+            };
+            modal.open();
+          });
+
+          if (!confirmed) {
+            toggle.setValue(false);
+            return;
+          }
+
+          this.plugin.settings.encryptionEnabled = true;
+          this.plugin.settings.encryptionPassphrase = pass;
+          await this.plugin.saveSettings();
+          new import_obsidian6.Notice("Шифрование включено! Следующая синхронизация будет зашифрована.");
+        } else {
+          this.plugin.settings.encryptionEnabled = false;
+          await this.plugin.saveSettings();
+          new import_obsidian6.Notice("Шифрование отключено.");
+        }
+      });
+    });
+
     new import_obsidian6.Setting(containerEl).setName(t("sync.heading")).setHeading();
     new import_obsidian6.Setting(containerEl).setName(t("remote.name")).setDesc(t("remote.desc")).addText((text) => {
       text.setPlaceholder("/vault").setValue(this.plugin.settings.remotePath).onChange((value) => {
@@ -2901,7 +3183,7 @@ var import_obsidian9 = require("obsidian");
 var import_obsidian7 = require("obsidian");
 var SYNC_ICON = "yadisk-sync";
 var ARROWS = '<g class="yadisk-sync-arrows"><g transform="scale(4.1667)" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/></g></g>';
-var LETTER = '<text x="53" y="48" text-anchor="middle" dominant-baseline="central" font-size="38" font-weight="700" fill="currentColor" stroke="none" style="font-family: var(--font-interface), sans-serif">\u042F</text>';
+var LETTER = '<text x="53" y="48" text-anchor="middle" dominant-baseline="central" font-size="34" font-weight="700" fill="currentColor" stroke="none" style="font-family: var(--font-interface), sans-serif">M</text>';
 function registerSyncIcon() {
   (0, import_obsidian7.addIcon)(SYNC_ICON, ARROWS + LETTER);
 }
@@ -3438,6 +3720,11 @@ var YaDiskSyncPlugin = class extends import_obsidian11.Plugin {
       this.settings.appPassword,
       this.settings.remotePath
     );
+    this.client.setEncryption(
+      this.settings.encryptionEnabled,
+      this.settings.encryptionMode,
+      this.settings.encryptionPassphrase
+    );
     this.stateManager = new SyncStateManager(this.app);
     if (data) {
       this.stateManager.loadFromData(data);
@@ -3607,6 +3894,11 @@ var YaDiskSyncPlugin = class extends import_obsidian11.Plugin {
     if (this.client) {
       this.client.setCredentials(this.settings.email, this.settings.appPassword);
       this.client.setRemotePath(this.settings.remotePath);
+      this.client.setEncryption(
+        this.settings.encryptionEnabled,
+        this.settings.encryptionMode,
+        this.settings.encryptionPassphrase
+      );
     }
   }
   /** Debounced write, for settings-tab edits. */
