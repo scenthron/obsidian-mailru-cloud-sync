@@ -276,6 +276,7 @@ var en = {
   "auth.status.name": "Connection status",
   "auth.status.connected": "✓ Connected to Mail.ru Cloud ({email})",
   "auth.status.enterCreds": "Provide Email and application password",
+  "auth.status.error": "❌ Connection error: {message}",
   "auth.checkBtn": "Check connection",
   "auth.checking": "Checking...",
   "auth.successNotice": "Connected to Mail.ru Cloud successfully!",
@@ -308,22 +309,23 @@ var en = {
   "transfer.importBtn": "Import settings",
   "exportModal.title": "Export settings",
   "exportModal.desc": "Set an encryption password for the link (6 to 16 characters). It will be required to decrypt settings on the target device.",
-  "exportModal.passName": "Link password (6 to 16 characters)",
+  "exportModal.passLabel": "Link password (6 to 16 characters)",
   "exportModal.passPlaceholder": "Enter password",
   "exportModal.passToggle": "Show/hide password",
+  "exportModal.passLengthNotice": "Password must be between 6 and 16 characters!",
   "exportModal.cancel": "Cancel",
-  "exportModal.close": "Close",
+  "exportModal.closeBtn": "Close",
   "exportModal.generateBtn": "Generate link",
   "exportModal.encrypting": "Encrypting...",
-  "exportModal.success": "Settings transfer link successfully generated:",
+  "exportModal.successTitle": "Settings transfer link successfully generated:",
   "exportModal.copyBtn": "Copy import link",
   "exportModal.copiedNotice": "Import link copied to clipboard!",
   "exportModal.securityAdvice": "⚠️ <b>Security recommendations:</b><br>• The stronger the password, the more secure your credentials inside the link.<br>• Transmit the link to your other device only via secure private channels, and do not send the link together with the password.<br>• We recommend deleting the link after import, or storing it in a secure password manager.",
-  "exportModal.error": "Error generating export: {message}",
+  "exportModal.errorNotice": "Error generating export: {message}",
   "importModal.title": "Import settings",
   "importModal.desc": "Paste the received import link and enter the password specified during export.",
-  "importModal.urlName": "Import link",
-  "importModal.passName": "Link password (6 to 16 characters)",
+  "importModal.urlLabel": "Import link",
+  "importModal.passLabel": "Link password (6 to 16 characters)",
   "importModal.passPlaceholder": "Enter password",
   "importModal.passToggle": "Show/hide password",
   "importModal.cancel": "Cancel",
@@ -544,6 +546,7 @@ var ru = {
   "auth.status.name": "Статус подключения",
   "auth.status.connected": "✓ Подключено к Облаку Mail.ru ({email})",
   "auth.status.enterCreds": "Укажите Email и пароль для внешнего приложения",
+  "auth.status.error": "❌ Ошибка подключения: {message}",
   "auth.checkBtn": "Проверить подключение",
   "auth.checking": "Проверка...",
   "auth.successNotice": "Подключение к Облаку Mail.ru успешно!",
@@ -576,22 +579,23 @@ var ru = {
   "transfer.importBtn": "Импортировать настройки",
   "exportModal.title": "Экспорт настроек",
   "exportModal.desc": "Задайте пароль для шифрования ссылки (от 6 до 16 символов). Он потребуется для расшифровки настроек на другом устройстве.",
-  "exportModal.passName": "Пароль ссылки (от 6 до 16 символов)",
+  "exportModal.passLabel": "Пароль ссылки (от 6 до 16 символов)",
   "exportModal.passPlaceholder": "Введите пароль",
   "exportModal.passToggle": "Показать/скрыть пароль",
+  "exportModal.passLengthNotice": "Пароль должен содержать от 6 до 16 символов!",
   "exportModal.cancel": "Отмена",
-  "exportModal.close": "Закрыть",
+  "exportModal.closeBtn": "Закрыть",
   "exportModal.generateBtn": "Сформировать ссылку",
   "exportModal.encrypting": "Шифрование...",
-  "exportModal.success": "Ссылка для переноса настроек успешно сформирована:",
+  "exportModal.successTitle": "Ссылка для переноса настроек успешно сформирована:",
   "exportModal.copyBtn": "Скопировать ссылку для импорта",
   "exportModal.copiedNotice": "Ссылка для импорта скопирована в буфер обмена!",
   "exportModal.securityAdvice": "⚠️ <b>Рекомендации по безопасности:</b><br>• Чем сложнее пароль, тем надёжнее защищены ваши учётные данные внутри ссылки.<br>• Передавайте ссылку на другое устройство только через приватные защищённые каналы и не передавайте ссылку вместе с секретным паролем.<br>• Рекомендуется удалить ссылку после завершения импорта настроек, либо хранить её в безопасном месте.",
-  "exportModal.error": "Ошибка при формировании экспорта: {message}",
+  "exportModal.errorNotice": "Ошибка при формировании экспорта: {message}",
   "importModal.title": "Импорт настроек",
   "importModal.desc": "Вставьте полученную ссылку для импорта и введите пароль, заданный при экспорте.",
-  "importModal.urlName": "Ссылка для импорта",
-  "importModal.passName": "Пароль ссылки (от 6 до 16 символов)",
+  "importModal.urlLabel": "Ссылка для импорта",
+  "importModal.passLabel": "Пароль ссылки (от 6 до 16 символов)",
   "importModal.passPlaceholder": "Введите пароль",
   "importModal.passToggle": "Показать/скрыть пароль",
   "importModal.cancel": "Отмена",
@@ -2735,6 +2739,7 @@ var YaDiskSyncSettingTab = class extends import_obsidian6.PluginSettingTab {
     /** A remote folder being typed, not yet handed to the plugin. */
     this.typedRemotePath = null;
     this.plugin = plugin;
+    this.lastCheckError = null;
   }
   hide() {
     this.commitRemotePath();
@@ -2796,8 +2801,26 @@ var YaDiskSyncSettingTab = class extends import_obsidian6.PluginSettingTab {
     });
 
     const checkSetting = new import_obsidian6.Setting(containerEl)
-      .setName(t("auth.status.name"))
-      .setDesc(isAuthorized ? t("auth.status.connected", { email: this.plugin.settings.email }) : t("auth.status.enterCreds"));
+      .setName(t("auth.status.name"));
+
+    if (this.lastCheckError) {
+      checkSetting.setDesc(createFragment((el) => {
+        const span = el.createSpan();
+        span.style.color = "var(--text-error, #e53935)";
+        span.style.fontWeight = "500";
+        span.setText(t("auth.status.error", { message: this.lastCheckError }));
+      }));
+    } else if (isAuthorized) {
+      checkSetting.setDesc(createFragment((el) => {
+        const span = el.createSpan();
+        span.style.color = "var(--text-success, #43a047)";
+        span.style.fontWeight = "500";
+        span.setText(t("auth.status.connected", { email: this.plugin.settings.email }));
+      }));
+    } else {
+      checkSetting.setDesc(t("auth.status.enterCreds"));
+    }
+
     checkSetting.addButton((btn) => {
       btn.setButtonText(t("auth.checkBtn")).setCta().onClick(async () => {
         if (!this.plugin.settings.email || !this.plugin.settings.appPassword) {
@@ -2808,11 +2831,15 @@ var YaDiskSyncSettingTab = class extends import_obsidian6.PluginSettingTab {
         btn.buttonEl.disabled = true;
         try {
           await this.plugin.client.getDiskInfo();
+          this.lastCheckError = null;
           new import_obsidian6.Notice(t("auth.successNotice"));
           await this.plugin.saveSettings();
           this.display();
         } catch (e) {
-          new import_obsidian6.Notice(t("error", { message: e instanceof Error ? e.message : String(e) }));
+          const errMsg = e instanceof Error ? e.message : String(e);
+          this.lastCheckError = errMsg;
+          new import_obsidian6.Notice(t("error", { message: errMsg }));
+          this.display();
         } finally {
           btn.setButtonText(t("auth.checkBtn"));
           btn.buttonEl.disabled = false;
@@ -4024,6 +4051,7 @@ var ExportSettingsModal = class extends import_obsidian10.Modal {
     let passVal = "";
     let passInputEl = null;
     let eyeForcedOpen = false;
+    let eyeBtnInstance = null;
 
     const passSetting = new import_obsidian10.Setting(contentEl)
       .setName(t("exportModal.passLabel"))
@@ -4031,14 +4059,50 @@ var ExportSettingsModal = class extends import_obsidian10.Modal {
         passInputEl = text.inputEl;
         text.inputEl.type = "password";
         text.inputEl.maxLength = 16;
+        text.inputEl.style.width = "220px";
         text.setPlaceholder(t("exportModal.passPlaceholder"));
+
+        const updateStyle = (val) => {
+          const len = val.length;
+          if (len === 0) {
+            text.inputEl.style.borderColor = "";
+            text.inputEl.style.backgroundColor = "";
+          } else if (len < 6) {
+            text.inputEl.style.borderColor = "var(--text-error, #e53935)";
+            text.inputEl.style.backgroundColor = "rgba(229, 57, 53, 0.1)";
+          } else {
+            text.inputEl.style.borderColor = "var(--text-success, #43a047)";
+            text.inputEl.style.backgroundColor = "rgba(67, 160, 71, 0.1)";
+          }
+        };
+
+        text.inputEl.addEventListener("focus", () => {
+          text.inputEl.type = "text";
+          if (eyeBtnInstance) eyeBtnInstance.setIcon("eye-off");
+        });
+
         text.onChange((val) => {
           passVal = val.trim();
+          updateStyle(passVal);
         });
+
+        text.inputEl.addEventListener("blur", () => {
+          if (!eyeForcedOpen) {
+            text.inputEl.type = "password";
+            if (eyeBtnInstance) eyeBtnInstance.setIcon("eye");
+          }
+          const val = text.inputEl.value.trim();
+          if (val.length > 0 && val.length < 6) {
+            new import_obsidian10.Notice(t("exportModal.passLengthNotice"));
+            updateStyle(val);
+          }
+        });
+
         setTimeout(() => text.inputEl.focus(), 50);
       });
 
     passSetting.addButton((btn) => {
+      eyeBtnInstance = btn;
       btn.setIcon("eye");
       btn.setTooltip(t("exportModal.passToggle"));
       btn.onClick(() => {
@@ -4159,20 +4223,26 @@ var ImportSettingsModal = class extends import_obsidian10.Modal {
     let urlVal = this.initialUrl;
     let passVal = "";
     let passInputEl = null;
+    let eyeForcedOpen = false;
+    let eyeBtnInstance = null;
 
     const urlSetting = new import_obsidian10.Setting(contentEl)
-      .setName(t("importModal.urlLabel"))
-      .addTextArea((ta) => {
-        ta.setPlaceholder("obsidian://mailru-sync-import?data=...");
-        ta.setValue(this.initialUrl);
-        ta.inputEl.style.width = "100%";
-        ta.inputEl.style.height = "75px";
-        ta.inputEl.style.fontSize = "0.85em";
-        ta.inputEl.style.resize = "none";
-        ta.onChange((val) => {
-          urlVal = val.trim();
-        });
+      .setName(t("importModal.urlLabel"));
+    urlSetting.settingEl.style.flexDirection = "column";
+    urlSetting.settingEl.style.alignItems = "stretch";
+
+    urlSetting.addTextArea((ta) => {
+      ta.setPlaceholder("obsidian://mailru-sync-import?data=...");
+      ta.setValue(this.initialUrl);
+      ta.inputEl.style.width = "100%";
+      ta.inputEl.style.height = "75px";
+      ta.inputEl.style.fontSize = "0.85em";
+      ta.inputEl.style.resize = "none";
+      ta.inputEl.style.marginTop = "8px";
+      ta.onChange((val) => {
+        urlVal = val.trim();
       });
+    });
 
     const passSetting = new import_obsidian10.Setting(contentEl)
       .setName(t("importModal.passLabel"))
@@ -4180,25 +4250,63 @@ var ImportSettingsModal = class extends import_obsidian10.Modal {
         passInputEl = text.inputEl;
         text.inputEl.type = "password";
         text.inputEl.maxLength = 16;
+        text.inputEl.style.width = "220px";
         text.setPlaceholder(t("importModal.passPlaceholder"));
+
+        const updateStyle = (val) => {
+          const len = val.length;
+          if (len === 0) {
+            text.inputEl.style.borderColor = "";
+            text.inputEl.style.backgroundColor = "";
+          } else if (len < 6) {
+            text.inputEl.style.borderColor = "var(--text-error, #e53935)";
+            text.inputEl.style.backgroundColor = "rgba(229, 57, 53, 0.1)";
+          } else {
+            text.inputEl.style.borderColor = "var(--text-success, #43a047)";
+            text.inputEl.style.backgroundColor = "rgba(67, 160, 71, 0.1)";
+          }
+        };
+
+        text.inputEl.addEventListener("focus", () => {
+          text.inputEl.type = "text";
+          if (eyeBtnInstance) eyeBtnInstance.setIcon("eye-off");
+        });
+
         text.onChange((val) => {
           passVal = val.trim();
+          updateStyle(passVal);
         });
+
+        text.inputEl.addEventListener("blur", () => {
+          if (!eyeForcedOpen) {
+            text.inputEl.type = "password";
+            if (eyeBtnInstance) eyeBtnInstance.setIcon("eye");
+          }
+          const val = text.inputEl.value.trim();
+          if (val.length > 0 && val.length < 6) {
+            new import_obsidian10.Notice(t("exportModal.passLengthNotice"));
+            updateStyle(val);
+          }
+        });
+
         if (this.initialUrl) {
           setTimeout(() => text.inputEl.focus(), 50);
         }
       });
 
     passSetting.addButton((btn) => {
+      eyeBtnInstance = btn;
       btn.setIcon("eye");
       btn.setTooltip(t("importModal.passToggle"));
       btn.onClick(() => {
         if (!passInputEl) return;
         if (passInputEl.type === "password") {
           passInputEl.type = "text";
+          eyeForcedOpen = true;
           btn.setIcon("eye-off");
         } else {
           passInputEl.type = "password";
+          eyeForcedOpen = false;
           btn.setIcon("eye");
         }
       });
