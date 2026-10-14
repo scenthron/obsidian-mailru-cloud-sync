@@ -3278,6 +3278,9 @@ var SyncQueue = class {
     entry.status = error === void 0 ? "done" : "failed";
     entry.error = error;
     entry.finishedAt = Date.now();
+    if (entry.status === "done") {
+      this.history = this.history.filter((h) => h.path !== item.path);
+    }
     this.history.unshift({ ...entry });
     if (this.history.length > QUEUE_HISTORY_LIMIT)
       this.history.length = QUEUE_HISTORY_LIMIT;
@@ -3568,19 +3571,6 @@ var QueueView = class extends import_obsidian9.ItemView {
         this.plugin.syncNow();
       });
     }
-
-    const clearBtn = buttonContainer.createEl("button", { cls: "clickable-icon yadisk-queue-clear-btn" });
-    clearBtn.setAttr("title", t("queue.clearHistory"));
-    clearBtn.style.display = "flex";
-    clearBtn.style.alignItems = "center";
-    clearBtn.style.justifyContent = "center";
-    clearBtn.style.padding = "4px 8px";
-    clearBtn.style.cursor = "pointer";
-    (0, import_obsidian9.setIcon)(clearBtn, "trash-2");
-    clearBtn.addEventListener("click", () => {
-      this.plugin.queue.clearHistory();
-      new import_obsidian9.Notice(t("queue.clearHistory"));
-    });
 
     const active = queue.active();
     if (active.length > 0) {
