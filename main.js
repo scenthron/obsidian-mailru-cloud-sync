@@ -209,6 +209,10 @@ var en = {
   "pause.notice.massBoth": "Sync paused: files went missing both here and on Mail.ru Cloud. Nothing was deleted.",
   "pause.notice.massLocal": "Sync paused: {count} of {total} files are missing from this vault. Nothing was deleted on Mail.ru Cloud.",
   "pause.notice.massRemote": "Sync paused: {count} of {total} files were removed from Mail.ru Cloud. Nothing was deleted in this vault.",
+  "pause.notice.cryptoPassphrase": "Sync paused: files in the cloud are encrypted, but the passphrase is not set or does not match. Auto-sync is paused.",
+  "pause.cryptoPassphrase.what": "Files in Mail.ru Cloud are encrypted, but the secret passphrase is missing or incorrect.",
+  "pause.cryptoPassphrase.todo": "Set the correct secret passphrase in plugin settings to continue syncing.",
+  "pause.openSettings": "Encryption settings",
   "pause.storage.what": "The vault folder can't be read. Was the drive it is on disconnected?",
   "pause.storage.todo": "Reconnect the drive and restart Obsidian. The sync picks up where it left off.",
   "pause.staleList.what": "Obsidian's list of files no longer matches the disk: files it considers deleted are still there. This happens when the drive holding the vault is reconnected while Obsidian is running.",
@@ -415,6 +419,10 @@ var ru = {
   "pause.notice.massBoth": "\u0421\u0438\u043D\u0445\u0440\u043E\u043D\u0438\u0437\u0430\u0446\u0438\u044F \u043D\u0430 \u043F\u0430\u0443\u0437\u0435: \u0444\u0430\u0439\u043B\u044B \u043F\u0440\u043E\u043F\u0430\u043B\u0438 \u0438 \u0437\u0434\u0435\u0441\u044C, \u0438 \u043D\u0430 \u041E\u0431\u043B\u0430\u043A\u0435 Mail.ru. \u041D\u0438\u0447\u0435\u0433\u043E \u043D\u0435 \u0443\u0434\u0430\u043B\u0435\u043D\u043E.",
   "pause.notice.massLocal": "\u0421\u0438\u043D\u0445\u0440\u043E\u043D\u0438\u0437\u0430\u0446\u0438\u044F \u043D\u0430 \u043F\u0430\u0443\u0437\u0435: \u0438\u0437 \u0445\u0440\u0430\u043D\u0438\u043B\u0438\u0449\u0430 \u043F\u0440\u043E\u043F\u0430\u043B\u0438 {count} \u0438\u0437 {total} \u0444\u0430\u0439\u043B\u043E\u0432. \u041D\u0430 \u041E\u0431\u043B\u0430\u043A\u0435 Mail.ru \u043D\u0438\u0447\u0435\u0433\u043E \u043D\u0435 \u0443\u0434\u0430\u043B\u0435\u043D\u043E.",
   "pause.notice.massRemote": "\u0421\u0438\u043D\u0445\u0440\u043E\u043D\u0438\u0437\u0430\u0446\u0438\u044F \u043D\u0430 \u043F\u0430\u0443\u0437\u0435: \u0441 \u041E\u0431\u043B\u0430\u043A\u0430 Mail.ru \u0443\u0434\u0430\u043B\u0435\u043D\u044B {count} \u0438\u0437 {total} \u0444\u0430\u0439\u043B\u043E\u0432. \u0412 \u0445\u0440\u0430\u043D\u0438\u043B\u0438\u0449\u0435 \u043D\u0438\u0447\u0435\u0433\u043E \u043D\u0435 \u0443\u0434\u0430\u043B\u0435\u043D\u043E.",
+  "pause.notice.cryptoPassphrase": "\u0421\u0438\u043D\u0445\u0440\u043E\u043D\u0438\u0437\u0430\u0446\u0438\u044F \u043D\u0430 \u043F\u0430\u0443\u0437\u0435: \u0444\u0430\u0439\u043B\u044B \u0432 \u043E\u0431\u043B\u0430\u043A\u0435 \u0437\u0430\u0448\u0438\u0444\u0440\u043E\u0432\u0430\u043D\u044B, \u0430 \u0441\u0435\u043A\u0440\u0435\u0442\u043D\u0430\u044F \u0444\u0440\u0430\u0437\u0430 \u043D\u0435 \u0437\u0430\u0434\u0430\u043D\u0430 \u0438\u043B\u0438 \u043D\u0435 \u0441\u043E\u0432\u043F\u0430\u0434\u0430\u0435\u0442. \u0410\u0432\u0442\u043E\u0441\u0438\u043D\u0445\u0440\u043E\u043D\u0438\u0437\u0430\u0446\u0438\u044F \u043F\u0440\u0438\u043E\u0441\u0442\u0430\u043D\u043E\u0432\u043B\u0435\u043D\u0430.",
+  "pause.cryptoPassphrase.what": "\u0424\u0430\u0439\u043B\u044B \u0432 \u041E\u0431\u043B\u0430\u043A\u0435 Mail.ru \u0437\u0430\u0448\u0438\u0444\u0440\u043E\u0432\u0430\u043D\u044B, \u043D\u043E \u0441\u0435\u043A\u0440\u0435\u0442\u043D\u0430\u044F \u0444\u0440\u0430\u0437\u0430 \u043D\u0435 \u0437\u0430\u0434\u0430\u043D\u0430 \u0438\u043B\u0438 \u043D\u0435 \u0441\u043E\u0432\u043F\u0430\u0434\u0430\u0435\u0442.",
+  "pause.cryptoPassphrase.todo": "\u0423\u0441\u0442\u0430\u043D\u043E\u0432\u0438\u0442\u0435 \u043A\u043E\u0440\u0440\u0435\u043A\u0442\u043D\u0443\u044E \u0441\u0435\u043A\u0440\u0435\u0442\u043D\u0443\u044E \u0444\u0440\u0430\u0437\u0443 \u0432 \u043D\u0430\u0441\u0442\u0440\u043E\u0439\u043A\u0430\u0445 \u043F\u043B\u0430\u0433\u0438\u043D\u0430, \u0447\u0442\u043E\u0431\u044B \u043F\u0440\u043E\u0434\u043E\u043B\u0436\u0438\u0442\u044C \u0441\u0438\u043D\u0445\u0440\u043E\u043D\u0438\u0437\u0430\u0446\u0438\u044E.",
+  "pause.openSettings": "\u041D\u0430\u0441\u0442\u0440\u043E\u0439\u043A\u0438 \u0448\u0438\u0444\u0440\u043E\u0432\u0430\u043D\u0438\u044F",
   "pause.storage.what": "\u041F\u0430\u043F\u043A\u0430 \u0445\u0440\u0430\u043D\u0438\u043B\u0438\u0449\u0430 \u043D\u0435 \u0447\u0438\u0442\u0430\u0435\u0442\u0441\u044F. \u0412\u043E\u0437\u043C\u043E\u0436\u043D\u043E, \u0434\u0438\u0441\u043A, \u043D\u0430 \u043A\u043E\u0442\u043E\u0440\u043E\u043C \u043E\u043D\u0430 \u043B\u0435\u0436\u0438\u0442, \u043E\u0442\u043A\u043B\u044E\u0447\u0451\u043D?",
   "pause.storage.todo": "\u041F\u043E\u0434\u043A\u043B\u044E\u0447\u0438\u0442\u0435 \u0434\u0438\u0441\u043A \u0438 \u043F\u0435\u0440\u0435\u0437\u0430\u043F\u0443\u0441\u0442\u0438\u0442\u0435 Obsidian. \u0421\u0438\u043D\u0445\u0440\u043E\u043D\u0438\u0437\u0430\u0446\u0438\u044F \u043F\u0440\u043E\u0434\u043E\u043B\u0436\u0438\u0442\u0441\u044F \u0441 \u0442\u043E\u0433\u043E \u043C\u0435\u0441\u0442\u0430, \u0433\u0434\u0435 \u043E\u0441\u0442\u0430\u043D\u043E\u0432\u0438\u043B\u0430\u0441\u044C.",
   "pause.staleList.what": "\u0421\u043F\u0438\u0441\u043E\u043A \u0444\u0430\u0439\u043B\u043E\u0432 Obsidian \u0431\u043E\u043B\u044C\u0448\u0435 \u043D\u0435 \u0441\u043E\u0432\u043F\u0430\u0434\u0430\u0435\u0442 \u0441 \u0434\u0438\u0441\u043A\u043E\u043C: \u0444\u0430\u0439\u043B\u044B, \u043A\u043E\u0442\u043E\u0440\u044B\u0435 \u043E\u043D \u0441\u0447\u0438\u0442\u0430\u0435\u0442 \u0443\u0434\u0430\u043B\u0451\u043D\u043D\u044B\u043C\u0438, \u043D\u0430 \u043C\u0435\u0441\u0442\u0435. \u0422\u0430\u043A \u0431\u044B\u0432\u0430\u0435\u0442, \u0435\u0441\u043B\u0438 \u0434\u0438\u0441\u043A \u0441 \u0445\u0440\u0430\u043D\u0438\u043B\u0438\u0449\u0435\u043C \u043F\u043E\u0434\u043A\u043B\u044E\u0447\u0438\u043B\u0438 \u043E\u0431\u0440\u0430\u0442\u043D\u043E \u043F\u0440\u0438 \u0437\u0430\u043F\u0443\u0449\u0435\u043D\u043D\u043E\u043C Obsidian.",
@@ -607,6 +615,13 @@ function getClientSecret() {
 // src/crypto-engine.ts
 var MAGIC_HEADER = new Uint8Array([79, 66, 83, 77, 82, 69, 50, 69]); // "OBSMRE2E"
 
+var CryptoPassphraseError = class extends Error {
+  constructor(message) {
+    super(message);
+    this.name = "CryptoPassphraseError";
+  }
+};
+
 var CryptoEngine = class {
   static async deriveKey(passphrase, salt) {
     const enc = new TextEncoder();
@@ -665,7 +680,7 @@ var CryptoEngine = class {
       return buffer; // Не зашифрован — возвращаем как есть
     }
     if (!passphrase) {
-      throw new Error("Файл зашифрован. Задайте секретную фразу в настройках плагина.");
+      throw new CryptoPassphraseError("Файл зашифрован. Задайте секретную фразу в настройках плагина.");
     }
     const saltOffset = MAGIC_HEADER.length;
     const ivOffset = saltOffset + 16;
@@ -683,7 +698,7 @@ var CryptoEngine = class {
         ciphertext
       );
     } catch (e) {
-      throw new Error("Неверная секретная фраза для расшифровки файлов.");
+      throw new CryptoPassphraseError("Неверная секретная фраза для расшифровки файлов.");
     }
   }
 };
@@ -1757,7 +1772,9 @@ var SyncEngine = class {
             stats.lastError = { path: item.path, message };
             if (reporter)
               reporter.failure(stats.errors, item.path, message);
-            if (!this.halt && !await this.storageAvailable(hooks)) {
+            if (e instanceof CryptoPassphraseError) {
+              this.halt = { kind: "crypto-passphrase" };
+            } else if (!this.halt && !await this.storageAvailable(hooks)) {
               this.halt = { kind: "storage" };
             }
             if (++this.failureStreak >= FAILURE_STREAK_LIMIT)
@@ -2603,8 +2620,8 @@ var YaDiskSyncSettingTab = class extends import_obsidian6.PluginSettingTab {
     const descEl = containerEl.createDiv({ cls: "setting-item-description" });
     descEl.style.marginBottom = "12px";
     descEl.style.fontSize = "0.85em";
-    descEl.style.opacity = "0.8";
-    descEl.innerHTML = "Шифрование защищает файлы в Облаке Mail.ru от посторонних глаз. <b>Локальные файлы на вашем устройстве остаются обычными заметками</b>. Если вы забудете секретную фразу, данные в облаке прочитать будет невозможно, но вы всегда можете задать новую фразу на устройстве с актуальной базой заметок и сделать новую выгрузку.";
+    descEl.style.opacity = "0.85";
+    descEl.innerHTML = "Шифрование защищает файлы в Облаке Mail.ru от посторонних глаз. <b>Зашифровано содержимое всех типов файлов (текст, аудио, видео, изображения)</b>, при этом структура папок и имена файлов сохраняются для надёжности. Локальные файлы на ваших устройствах остаются обычными заметками.<br><br><b>Если вы забыли секретную фразу:</b> просто задайте новую фразу на устройстве с актуальной базой заметок и запустите команду <i>«Полная синхронизация: заново прочитать Облако Mail.ru и хранилище»</i>. Все зашифрованные файлы в облаке будут безопасно перезаписаны вашими текущими заметками с новым ключом.";
 
     let passphraseInputEl = null;
     let passphraseWrapperEl = null;
@@ -2649,7 +2666,16 @@ var YaDiskSyncSettingTab = class extends import_obsidian6.PluginSettingTab {
         updateStyle(val);
         if (val.length >= 6 && val.length <= 16) {
           this.plugin.settings.encryptionPassphrase = val;
+          this.plugin.client.setEncryption(
+            this.plugin.settings.encryptionEnabled,
+            this.plugin.settings.encryptionMode,
+            val
+          );
           this.plugin.queueSaveSettings();
+          if (this.plugin.pause && this.plugin.pause.block.kind === "crypto-passphrase") {
+            this.plugin.leavePause();
+            void this.plugin.syncNow();
+          }
         }
       });
 
@@ -2665,7 +2691,16 @@ var YaDiskSyncSettingTab = class extends import_obsidian6.PluginSettingTab {
           updateStyle(val);
         } else if (val.length >= 6) {
           this.plugin.settings.encryptionPassphrase = val;
+          this.plugin.client.setEncryption(
+            this.plugin.settings.encryptionEnabled,
+            this.plugin.settings.encryptionMode,
+            val
+          );
           this.plugin.queueSaveSettings();
+          if (this.plugin.pause && this.plugin.pause.block.kind === "crypto-passphrase") {
+            this.plugin.leavePause();
+            void this.plugin.syncNow();
+          }
         }
       });
     });
@@ -3118,8 +3153,7 @@ var SyncQueue = class {
     if (!entry || entry.status !== "active")
       return;
     this.finishedTotal++;
-    const isCryptoIssue = error && (error.includes("секретную фразу") || error.includes("зашифрован") || error.includes("расшифровки"));
-    entry.status = error === void 0 ? "done" : isCryptoIssue ? "warning" : "failed";
+    entry.status = error === void 0 ? "done" : "failed";
     entry.error = error;
     entry.finishedAt = Date.now();
     this.history.unshift({ ...entry });
@@ -3454,9 +3488,6 @@ var QueueView = class extends import_obsidian9.ItemView {
       const failed = queue.history.filter((entry) => entry.status === "failed").length;
       if (failed > 0)
         titleWrap.createSpan({ cls: "yadisk-queue-error", text: ` \xB7 ${t("queue.failedCount", { count: failed })}` });
-      const warningCount = queue.history.filter((entry) => entry.status === "warning").length;
-      if (warningCount > 0)
-        titleWrap.createSpan({ cls: "yadisk-queue-warning", text: ` \xB7 ${t("queue.encryptedCount", { count: warningCount })}` });
 
       const secClearBtn = summary.createEl("button", { cls: "clickable-icon" });
       secClearBtn.setAttr("title", t("queue.clearHistory"));
@@ -3539,7 +3570,7 @@ var QueueView = class extends import_obsidian9.ItemView {
     const row = list.createDiv({ cls: `yadisk-queue-row is-${entry.status}` });
     row.setAttr("title", `${t(ACTION_LABELS[entry.action])}: ${entry.path}`);
     const icon = row.createSpan({ cls: "yadisk-queue-icon" });
-    const iconName = entry.status === "failed" ? "alert-circle" : entry.status === "warning" ? "lock" : ACTION_ICONS[entry.action];
+    const iconName = entry.status === "failed" ? "alert-circle" : ACTION_ICONS[entry.action];
     (0, import_obsidian9.setIcon)(icon, iconName);
     const slash = entry.path.lastIndexOf("/");
     const body = row.createDiv({ cls: "yadisk-queue-body" });
@@ -3571,6 +3602,8 @@ function describeBlock(block, partial) {
       return t("pause.notice.staleList", { untouched });
     case "remote-missing":
       return t("pause.notice.remoteMissing", { path: block.remotePath });
+    case "crypto-passphrase":
+      return t("pause.notice.cryptoPassphrase");
     case "mass-delete": {
       if (block.deletions.length > 1)
         return t("pause.notice.massBoth");
@@ -3602,6 +3635,9 @@ var PauseModal = class extends import_obsidian10.Modal {
     new import_obsidian10.Setting(this.contentEl).setName(t("pause.title")).setHeading();
     const block = this.block;
     switch (block.kind) {
+      case "crypto-passphrase":
+        this.renderCryptoPassphrase();
+        break;
       case "storage":
         this.renderStorage();
         break;
@@ -3615,6 +3651,23 @@ var PauseModal = class extends import_obsidian10.Modal {
         this.renderMassDelete(block.deletions);
         break;
     }
+  }
+  renderCryptoPassphrase() {
+    this.paragraph(t("pause.cryptoPassphrase.what"));
+    this.paragraph(t("pause.cryptoPassphrase.todo"));
+    this.buttons([
+      {
+        text: t("pause.openSettings"),
+        cls: "mod-cta",
+        onClick: () => {
+          this.close();
+          if (this.actions.openSettings) {
+            this.actions.openSettings();
+          }
+        }
+      },
+      { text: t("pause.checkAgain"), onClick: () => this.actions.recheck() }
+    ]);
   }
   onClose() {
     this.stopCountdown();
@@ -4321,6 +4374,13 @@ var YaDiskSyncPlugin = class extends import_obsidian11.Plugin {
       approved ? approved.local.size + approved.remote.size : 0,
       {
         recheck: () => syncAgain({ approve: approved }),
+        openSettings: () => {
+          const setting = this.app.setting;
+          if (setting) {
+            setting.open();
+            setting.openTabById(this.manifest.id);
+          }
+        },
         startOver: () => {
           this.stateManager.resetState();
           syncAgain();
