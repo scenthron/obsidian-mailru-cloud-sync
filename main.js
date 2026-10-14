@@ -4054,6 +4054,11 @@ var PauseModal = class extends import_obsidian10.Modal {
   /** Every button closes the dialog first; what it does comes after. */
   buttons(specs) {
     const footer = this.contentEl.createDiv({ cls: "modal-button-container" });
+    footer.style.display = "flex";
+    footer.style.justifyContent = "flex-end";
+    footer.style.gap = "8px";
+    footer.style.marginTop = "16px";
+    footer.style.paddingBottom = "4px";
     for (const spec of specs) {
       const btn = footer.createEl("button", { text: spec.text });
       if (spec.cls)

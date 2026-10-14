@@ -1,8 +1,20 @@
 .yadisk-conflict-modal {
 	max-height: 70vh;
 	overflow-y: auto;
+	padding-bottom: 8px;
 }
 
+.yadisk-pause-modal {
+	max-height: 70vh;
+	overflow-y: auto;
+	padding-bottom: 8px;
+}
+
+.yadisk-pause-modal .modal-button-container,
+.yadisk-conflict-modal .modal-button-container {
+	margin-top: 16px;
+	padding-bottom: 4px;
+}
 .yadisk-conflict-modal .conflict-list {
 	display: flex;
 	flex-direction: column;
@@ -139,10 +151,6 @@
 	width: 100%;
 }
 
-.yadisk-pause-modal {
-	max-height: 70vh;
-	overflow-y: auto;
-}
 
 .yadisk-pause-modal .yadisk-pause-list {
 	max-height: 40vh;
