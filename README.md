@@ -33,14 +33,17 @@ An [Obsidian](https://obsidian.md) plugin for synchronizing your vault notes and
 
 #### General Settings & Connection Status
 ![Plugin Settings and Connection Status](images/settings_overview.png)
+
 *Figure 1: Settings tab, colored connection verification, and sync options.*
 
 #### End-to-End Encryption (E2E) Section
 ![End-to-End Encryption](images/encryption_settings.png)
+
 *Figure 2: Setting secret passphrase and enabling AES-256-GCM encryption.*
 
 #### Settings Export & Transfer Dialog
 ![Export and Import via Link](images/export_import_modal.png)
+
 *Figure 3: Transferring settings across devices via password-protected encrypted link.*
 
 ---
