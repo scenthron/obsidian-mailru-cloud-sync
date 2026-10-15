@@ -36,7 +36,7 @@ var DEFAULT_SETTINGS = {
   remotePath: "/ObsidianVault",
   syncDirection: "bidirectional" /* Bidirectional */,
   conflictStrategy: "ask" /* Ask */,
-  autoSyncSeconds: 300,
+  autoSyncSeconds: 30,
   excludePatterns: [
     ".trash/**"
   ],
@@ -865,7 +865,7 @@ var CryptoEngine = class {
       remotePath: settings.remotePath || "/ObsidianVault",
       syncDirection: settings.syncDirection || "bidirectional",
       conflictStrategy: settings.conflictStrategy || "newer_wins",
-      autoSyncSeconds: settings.autoSyncSeconds != null ? settings.autoSyncSeconds : 300,
+      autoSyncSeconds: settings.autoSyncSeconds != null ? settings.autoSyncSeconds : 30,
       deleteConfirmThreshold: settings.deleteConfirmThreshold != null ? settings.deleteConfirmThreshold : 50,
       maxFileSizeMB: settings.maxFileSizeMB != null ? settings.maxFileSizeMB : 50,
       encryptionEnabled: !!settings.encryptionEnabled,
@@ -4562,6 +4562,11 @@ var ImportSettingsModal = class extends import_obsidian10.Modal {
         if (settingTab && settingTab.plugin === this.plugin) {
           settingTab.display();
         }
+
+        // Автоматический запуск принудительной полной синхронизации после импорта настроек
+        window.setTimeout(() => {
+          this.plugin.runFullSync();
+        }, 300);
       } catch (err) {
         console.error("[Mail.ru Sync] Import error:", err);
         new import_obsidian10.Notice(err.message || t("importModal.errorNotice"));
