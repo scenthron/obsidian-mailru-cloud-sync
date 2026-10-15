@@ -267,6 +267,7 @@ var en = {
   "size.mb": "{n} MB",
   "error.localMissing": "Local file not found: {path}",
   "error.oauth": "Authorization error: {status}",
+  "error.maxRetries": "Maximum retry attempts exceeded",
   "auth.email.name": "Mail.ru Email",
   "auth.email.desc": "Email address connected to Mail.ru Cloud (e.g. user@mail.ru)",
   "auth.pass.name": "Password for external application",
@@ -545,6 +546,19 @@ var ru = {
   "conflict.modified": "\u0418\u0437\u043C\u0435\u043D\u0451\u043D: {date}",
   "conflict.deleted": "\u0423\u0434\u0430\u043B\u0451\u043D",
   "conflict.keepLocal": "\u041E\u0441\u0442\u0430\u0432\u0438\u0442\u044C \u044D\u0442\u043E\u0442",
+  "conflict.keepRemote": "Оставить из Облака Mail.ru",
+  "conflict.skip": "Пропустить",
+  "conflict.hidden": "Ещё {count} конфликтов не показаны в списке. Выберите, что с ними сделать:",
+  "conflict.allLocal": "Все отсюда",
+  "conflict.allRemote": "Все с Облака Mail.ru",
+  "conflict.skipAll": "Пропустить все",
+  "conflict.apply": "Применить",
+  "size.bytes": "{n} Б",
+  "size.kb": "{n} КБ",
+  "size.mb": "{n} МБ",
+  "error.localMissing": "Локальный файл не найден: {path}",
+  "error.oauth": "Ошибка авторизации: {status}",
+  "error.maxRetries": "Превышено максимальное количество попыток запроса",
   "auth.email.name": "Email Mail.ru",
   "auth.email.desc": "Почтовый ящик, к которому подключено Облако (например: user@mail.ru)",
   "auth.pass.name": "Пароль для внешнего приложения",
@@ -627,8 +641,7 @@ var ru = {
   "cryptoEngine.fileEncrypted": "Файл зашифрован. Задайте секретную фразу в настройках плагина.",
   "cryptoEngine.wrongVaultPass": "Неверная секретная фраза для расшифровки файлов.",
   "cryptoEngine.downloadEncrypted": "Файлы в Облаке Mail.ru зашифрованы. Включите шифрование и укажите секретную фразу в настройках плагина.",
-  "cryptoEngine.cloudFolderChanged": "Каталог в Облаке Mail.ru изменился во время сканирования.",
-  "conflict.keepRemote": "Оставить из Облака"
+  "cryptoEngine.cloudFolderChanged": "Каталог в Облаке Mail.ru изменился во время сканирования."
 };
 var dictionaries = { en, ru };
 var current = "en" /* English */;
@@ -640,7 +653,7 @@ function setLanguage(language) {
   current = code.toLowerCase().startsWith("ru") ? "ru" /* Russian */ : "en" /* English */;
 }
 function t(key, vars) {
-  let text = dictionaries[current][key];
+  let text = (dictionaries[current] && dictionaries[current][key]) || (dictionaries["en"] && dictionaries["en"][key]) || key;
   if (vars) {
     for (const [name, value] of Object.entries(vars)) {
       text = text.replace(`{${name}}`, String(value));
