@@ -296,16 +296,18 @@ var en = {
   "crypto.toggle.desc": "When enabled, files will be encrypted before uploading to Mail.ru Cloud.",
   "crypto.toggle.setPassFirst": "Set a secret passphrase (6 to 16 characters) first!",
   "crypto.confirm.title": "Cloud Encryption",
-  "crypto.confirm.msg": "Enabling or disabling encryption will apply to new and modified files in the cloud. Other files will keep their status. To update the status of all files in the cloud, click the <i>«Upload to Cloud»</i> button.<br><br>It is recommended to change encryption settings on a device with an up-to-date vault.",
-  "crypto.confirm.cancel": "Cancel",
-  "crypto.confirm.ok": "Got it",
+  "crypto.confirm.msg": "Enabling or disabling encryption will apply to new and modified files in the cloud. Other files will keep their status.<br><br>Make sure this device contains the most up-to-date version of your notes. Uploading will overwrite cloud data with data from this device. Are you sure you want to proceed?",
+  "crypto.confirm.cancel": "No",
+  "crypto.confirm.ok": "Yes, upload to cloud",
   "crypto.notice.enabled": "Encryption enabled.",
   "crypto.notice.disabled": "Encryption disabled.",
   "crypto.uploadSetting.name": "Upload to Cloud",
   "crypto.uploadSetting.desc": "Forces an upload of all files to the cloud to apply the current encryption status. Use after enabling or disabling encryption on the device with the most up-to-date vault.",
   "crypto.uploadBtn": "Upload to Cloud",
   "crypto.uploadConfirm.title": "Upload to Cloud",
-  "crypto.uploadConfirm.msg": "All files from this device will be uploaded to the cloud with the current encryption status.<br><br>⚠️ <b>Make sure this device has the most up-to-date version of your notes</b> so you don't overwrite newer changes from other devices. Are you sure you want to proceed?",
+  "crypto.uploadConfirm.msg": "Enabling or disabling encryption will apply to new and modified files in the cloud. Other files will keep their status.<br><br>Make sure this device contains the most up-to-date version of your notes. Uploading will overwrite cloud data with data from this device. Are you sure you want to proceed?",
+  "crypto.uploadConfirm.cancel": "No",
+  "crypto.uploadConfirm.ok": "Yes, upload to cloud",
   "crypto.uploadNotice": "Starting full upload to the cloud...",
   "transfer.heading": "Transfer settings between devices",
   "transfer.desc": "Quickly transfer plugin settings, credentials, and sync parameters to another device without manual entry. All data inside the link is securely encrypted with your one-time link password.",
@@ -572,16 +574,18 @@ var ru = {
   "crypto.toggle.desc": "Если включено, файлы будут зашифрованы перед отправкой в Облако Mail.ru.",
   "crypto.toggle.setPassFirst": "Сначала задайте секретную фразу от 6 до 16 символов!",
   "crypto.confirm.title": "Шифрование в облаке",
-  "crypto.confirm.msg": "Включение или отключение шифрования будет применяться к новым и изменяемым файлам в облаке. Остальные файлы не поменяют свой статус.<br><br>Чтобы изменить статус всех файлов в облаке, например, сделать их зашифрованными, необходимо нажать на кнопку <i>«Выгрузить в Облако»</i>.<br><br>Рекомендуется изменять настройку шифрования на устройстве с актуальной базой данных.",
-  "crypto.confirm.cancel": "Отмена",
-  "crypto.confirm.ok": "Понятно",
+  "crypto.confirm.msg": "Включение или отключение шифрования будет применяться к новым и изменяемым файлам в облаке. Остальные файлы не поменяют свой статус.<br><br>Убедитесь, что на этом устройстве находится самая актуальная версия заметок. Выгрузка перезапишет данные в облаке, данными с этого устройства. Вы уверены, что хотите продолжить?",
+  "crypto.confirm.cancel": "Нет",
+  "crypto.confirm.ok": "Да. Выгрузить в облако",
   "crypto.notice.enabled": "Шифрование включено.",
   "crypto.notice.disabled": "Шифрование отключено.",
   "crypto.uploadSetting.name": "Выгрузить в Облако",
   "crypto.uploadSetting.desc": "Принудительно выгружает все файлы в облако с текущим статусом шифрования. Используйте после включения или выключения шифрования на устройстве с самой актуальной версией заметок.",
   "crypto.uploadBtn": "Выгрузить в Облако",
   "crypto.uploadConfirm.title": "Выгрузить в Облако",
-  "crypto.uploadConfirm.msg": "Все файлы с этого устройства будут выгружены в облако с текущим статусом шифрования.<br><br>⚠️ <b>Убедитесь, что на этом устройстве открыта самая свежая версия заметок</b>, чтобы не перезаписать более новые изменения с других устройств. Вы уверены, что хотите продолжить?",
+  "crypto.uploadConfirm.msg": "Включение или отключение шифрования будет применяться к новым и изменяемым файлам в облаке. Остальные файлы не поменяют свой статус.<br><br>Убедитесь, что на этом устройстве находится самая актуальная версия заметок. Выгрузка перезапишет данные в облаке, данными с этого устройства. Вы уверены, что хотите продолжить?",
+  "crypto.uploadConfirm.cancel": "Нет",
+  "crypto.uploadConfirm.ok": "Да. Выгрузить в облако",
   "crypto.uploadNotice": "Запускается полная выгрузка в облако...",
   "transfer.heading": "Перенос настроек между устройствами",
   "transfer.desc": "Позволяет быстро перенести настройки, авторизацию и параметры синхронизации на другое устройство без ручного ввода. Все данные внутри ссылки надёжно зашифрованы вашим одноразовым паролем.",
@@ -3057,54 +3061,6 @@ var YaDiskSyncSettingTab = class extends import_obsidian6.PluginSettingTab {
               return;
             }
 
-            // Показываем информационное окно
-            const confirmed = await new Promise((resolve) => {
-              let settled = false;
-              const modal = new import_obsidian6.Modal(this.app);
-              modal.onOpen = () => {
-                const { contentEl } = modal;
-                contentEl.createEl("h3", { text: t("crypto.confirm.title") });
-                const msgEl = contentEl.createEl("p");
-                msgEl.innerHTML = t("crypto.confirm.msg");
-                const buttons = contentEl.createDiv({ cls: "modal-button-container" });
-                buttons.style.display = "flex";
-                buttons.style.justifyContent = "flex-end";
-                buttons.style.gap = "8px";
-                buttons.style.marginTop = "16px";
-                buttons.style.paddingBottom = "4px";
-
-                const cancelBtn = buttons.createEl("button", { text: t("crypto.confirm.cancel") });
-                cancelBtn.addEventListener("click", () => {
-                  if (!settled) {
-                    settled = true;
-                    resolve(false);
-                  }
-                  modal.close();
-                });
-
-                const okBtn = buttons.createEl("button", { text: t("crypto.confirm.ok"), cls: "mod-cta" });
-                okBtn.addEventListener("click", () => {
-                  if (!settled) {
-                    settled = true;
-                    resolve(true);
-                  }
-                  modal.close();
-                });
-              };
-              modal.onClose = () => {
-                if (!settled) {
-                  settled = true;
-                  resolve(false);
-                }
-              };
-              modal.open();
-            });
-
-            if (!confirmed) {
-              toggle.setValue(false);
-              return;
-            }
-
             this.plugin.settings.encryptionEnabled = true;
             this.plugin.settings.encryptionPassphrase = pass;
             this.plugin.client.setEncryption(true, this.plugin.settings.encryptionMode, pass);
@@ -3120,54 +3076,6 @@ var YaDiskSyncSettingTab = class extends import_obsidian6.PluginSettingTab {
               void this.plugin.syncNow();
             }, 300);
           } else {
-            // Показываем информационное окно при отключении шифрования
-            const confirmed = await new Promise((resolve) => {
-              let settled = false;
-              const modal = new import_obsidian6.Modal(this.app);
-              modal.onOpen = () => {
-                const { contentEl } = modal;
-                contentEl.createEl("h3", { text: t("crypto.confirm.title") });
-                const msgEl = contentEl.createEl("p");
-                msgEl.innerHTML = t("crypto.confirm.msg");
-                const buttons = contentEl.createDiv({ cls: "modal-button-container" });
-                buttons.style.display = "flex";
-                buttons.style.justifyContent = "flex-end";
-                buttons.style.gap = "8px";
-                buttons.style.marginTop = "16px";
-                buttons.style.paddingBottom = "4px";
-
-                const cancelBtn = buttons.createEl("button", { text: t("crypto.confirm.cancel") });
-                cancelBtn.addEventListener("click", () => {
-                  if (!settled) {
-                    settled = true;
-                    resolve(false);
-                  }
-                  modal.close();
-                });
-
-                const okBtn = buttons.createEl("button", { text: t("crypto.confirm.ok"), cls: "mod-cta" });
-                okBtn.addEventListener("click", () => {
-                  if (!settled) {
-                    settled = true;
-                    resolve(true);
-                  }
-                  modal.close();
-                });
-              };
-              modal.onClose = () => {
-                if (!settled) {
-                  settled = true;
-                  resolve(false);
-                }
-              };
-              modal.open();
-            });
-
-            if (!confirmed) {
-              toggle.setValue(true);
-              return;
-            }
-
             this.plugin.settings.encryptionEnabled = false;
             this.plugin.client.setEncryption(false, this.plugin.settings.encryptionMode, this.plugin.settings.encryptionPassphrase);
             await this.plugin.saveSettings();
@@ -3216,7 +3124,7 @@ var YaDiskSyncSettingTab = class extends import_obsidian6.PluginSettingTab {
               buttons.style.marginTop = "16px";
               buttons.style.paddingBottom = "4px";
 
-              const cancelBtn = buttons.createEl("button", { text: t("crypto.confirm.cancel") });
+              const cancelBtn = buttons.createEl("button", { text: t("crypto.uploadConfirm.cancel") });
               cancelBtn.addEventListener("click", () => {
                 if (!settled) {
                   settled = true;
@@ -3225,7 +3133,7 @@ var YaDiskSyncSettingTab = class extends import_obsidian6.PluginSettingTab {
                 modal.close();
               });
 
-              const okBtn = buttons.createEl("button", { text: t("crypto.confirm.ok"), cls: "mod-cta" });
+              const okBtn = buttons.createEl("button", { text: t("crypto.uploadConfirm.ok"), cls: "mod-cta" });
               okBtn.addEventListener("click", () => {
                 if (!settled) {
                   settled = true;
