@@ -94,11 +94,10 @@ In Obsidian, press `Ctrl + P` (`Cmd + P` on macOS) to invoke commands, or assign
 
 To protect your files from unauthorized access:
 1. In the **Data Encryption (E2E)** section, enter a strong **Secret passphrase** (6 to 16 characters).
-2. Toggle on **Enable cloud encryption** and confirm the dialog prompt.
-3. The plugin will automatically encrypt all vault files with AES-256-GCM and upload them to Mail.ru Cloud.
+2. Toggle on **Enable cloud encryption** and read the informational dialog.
+3. Click the **«Upload to Cloud»** button to force update and encrypt all files in the cloud from this device.
+4. On your other devices, simply enter the same passphrase and turn on the toggle (or transfer settings via secure link). The device will automatically download and decrypt your notes from the cloud!
 
-> ⚠️ **Important:** Before enabling or disabling encryption, make sure all your devices are synchronized and this device contains the most recent version of your notes to avoid overwriting changes from other devices.
->
 > 💡 **Tip:** Keep your secret passphrase safe! Accessing your notes from other devices requires entering the exact same passphrase (or transferring it via the export link).
 
 ---
