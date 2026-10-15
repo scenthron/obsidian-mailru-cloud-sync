@@ -12,15 +12,15 @@ An [Obsidian](https://obsidian.md) plugin for synchronizing your vault notes and
 
 - 🚀 **Direct WebDAV Synchronization**: Connects directly to official Mail.ru Cloud servers without third-party proxies.
 - 🔐 **End-to-End Encryption (AES-256-GCM)**: Protects the contents of notes and attachments before uploading to the cloud.
-  - Files are encrypted on your local device using AES-256-GCM with key derivation via PBKDF2 (SHA-256, 100,000 iterations).
+  - Files are encrypted before uploading to the Cloud using AES-256-GCM with key derivation via PBKDF2 (SHA-256, 100,000 iterations).
   - Folder structure and file names remain intact for reliable synchronization.
   - Local files on your devices remain unencrypted in their original state.
+  - **Fail-Fast Encrypted Vault Guard**: If encrypted files are detected in the cloud while the local secret passphrase is not set or encryption is disabled, synchronization stops immediately to protect the local vault from corruption. Sync resumes once encryption settings are configured on this device.
 - 📲 **Instant Settings Transfer via Link**:
   - Quickly transfer all plugin parameters (including credentials and secret passphrase) to a phone, tablet, or another computer with a single click using a secure link `obsidian://mailru-sync-import?data=...`.
   - Link payload is encrypted with a separate temporary password (6 to 16 characters).
 - 🛡️ **Intelligent Data Loss Protection**:
   - **Mass Deletion Protection**: If a sync operation would delete more files than the configured threshold (or over 25% of the vault), synchronization pauses automatically and asks for confirmation.
-  - **Fail-Fast Encrypted Vault Guard**: If encrypted files are detected in the cloud while the local secret passphrase is not set, synchronization stops immediately to protect the cloud vault from accidental overwriting.
 - ⚡ **Bidirectional Sync & Flexible Conflict Resolution**:
   - Sync direction options: Bidirectional, Push only, or Pull only.
   - Conflict resolution strategies: Newer wins, Local wins, Remote wins, or Manual prompt.
@@ -62,12 +62,12 @@ For secure WebDAV access, Mail.ru requires creating a dedicated application pass
 1. Open Mail.ru security settings: [Application Passwords](https://account.mail.ru/user/2-step-auth/passwords).
 2. Click **Add password** (or "Create").
 3. Enter a label, for example: `Obsidian Sync`.
-4. Copy the generated 16-character password.
+4. Immediately copy and save the generated 16-character password: it cannot be viewed again in Mail.ru — you can only delete it and generate a new one.
 
 ### 2. Configuring the Plugin in Obsidian
 1. Open **Obsidian Settings** → **Mail.ru Cloud Sync**.
 2. In the **Mail.ru Email** field, enter your email address (e.g. `user@mail.ru`).
-3. In the **Password for external application** field, paste your generated application password.
+3. In the **Password for external application** field, paste your generated application password (Important: enter the dedicated application password created in step 1, not your primary email password).
 4. Click **Check connection**.
    - Upon successful verification, the status indicator will turn green: `✓ Connected to Mail.ru Cloud (user@mail.ru)`.
 5. Specify the remote folder path (default: `/ObsidianVault`). The plugin will create it automatically in Mail.ru Cloud upon first sync.
