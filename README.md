@@ -51,7 +51,7 @@ An [Obsidian](https://obsidian.md) plugin for synchronizing your vault notes and
 ## 📦 Installation
 
 To install the plugin manually:
-1. Go to the [GitHub Releases](https://github.com/Centhron/obsidian-mailru-cloud-sync/releases) page and download **`mailru-cloud-sync.zip`** (or the 3 individual files: `main.js`, `manifest.json`, `styles.css`) from the latest release.
+1. Go to the [GitHub Releases](https://github.com/scenthron/obsidian-mailru-cloud-sync/releases) page and download **`mailru-cloud-sync.zip`** (or the 3 individual files: `main.js`, `manifest.json`, `styles.css`) from the latest release.
 2. Extract the archive into your vault's hidden plugins directory: `.obsidian/plugins/` (resulting in `.obsidian/plugins/mailru-cloud-sync/` containing the plugin files).
 3. Reload Obsidian (or press `Ctrl + R`), go to **Settings** → **Community plugins**, and enable **Mail.ru Cloud Sync**.
 
