@@ -3,7 +3,6 @@
 [English version](README.md) • **Русская версия**
 
 [![Obsidian Downloads](https://img.shields.io/badge/dynamic/json?logo=obsidian&color=7C3AED&label=Obsidian%20Downloads&query=%24%5B'mailru-cloud-sync'%5D.downloads&url=https%3A%2F%2Fraw.githubusercontent.com%2Fobsidianmd%2Fobsidian-releases%2Fmaster%2Fcommunity-plugin-stats.json)](https://obsidian.md/plugins?id=mailru-cloud-sync)
-[![GitHub Downloads (all assets, all releases)](https://img.shields.io/github/downloads/scenthron/obsidian-mailru-cloud-sync/total?style=flat-square&color=2ea44f&label=GitHub%20Downloads&logo=github)](https://github.com/scenthron/obsidian-mailru-cloud-sync/releases)
 
 Плагин для [Obsidian](https://obsidian.md), позволяющий надёжно синхронизировать ваши заметки и вложения через **Облако Mail.ru (WebDAV)** с поддержкой **сквозного шифрования (E2E)**, защитой от случайного удаления и мгновенным переносом настроек между устройствами.
 

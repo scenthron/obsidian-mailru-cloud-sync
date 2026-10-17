@@ -2,6 +2,8 @@
 
 **English** • [Русская версия](README_RU.md)
 
+[![Obsidian Downloads](https://img.shields.io/badge/dynamic/json?logo=obsidian&color=7C3AED&label=Obsidian%20Downloads&query=%24%5B'mailru-cloud-sync'%5D.downloads&url=https%3A%2F%2Fraw.githubusercontent.com%2Fobsidianmd%2Fobsidian-releases%2Fmaster%2Fcommunity-plugin-stats.json)](https://obsidian.md/plugins?id=mailru-cloud-sync)
+
 An [Obsidian](https://obsidian.md) plugin for synchronizing your vault notes and attachments via **Mail.ru Cloud (WebDAV)**, featuring **End-to-End Encryption (E2E)**, accidental deletion protection, and seamless settings transfer between devices.
 
 > 💡 *This project is built upon the open-source [Yandex Disk Sync](https://github.com/Nikolay-Eltsov/obsidian-yadisk-sync) plugin by [Nikolay Eltsov](https://github.com/Nikolay-Eltsov), adapted for Mail.ru Cloud WebDAV protocol, and extended with AES-256-GCM End-to-End Encryption and encrypted link configuration transfer.*
