@@ -50,7 +50,14 @@
 
 ## 📦 Установка
 
-Для ручной установки плагина:
+### Вариант 1: Через официальный каталог Obsidian (Рекомендуется)
+1. Откройте **Настройки** → **Сторонние плагины** (Community plugins).
+2. Нажмите **Обзор** (Browse) и введите в строке поиска **`Mail.ru Cloud Sync`**.
+3. Нажмите кнопку **Установить** (Install), а затем **Включить** (Enable).
+
+*(Или используйте прямую ссылку для открытия плагина в приложении: [Установить Mail.ru Cloud Sync в Obsidian](obsidian://show-plugin?id=mailru-cloud-sync)).*
+
+### Вариант 2: Вручную через GitHub Releases
 1. Перейдите на страницу [GitHub Releases](https://github.com/scenthron/obsidian-mailru-cloud-sync/releases) и скачайте архив **`mailru-cloud-sync.zip`** (или 3 отдельных файла `main.js`, `manifest.json`, `styles.css`) из последнего релиза.
 2. Распакуйте архив в скрытую папку плагинов вашего хранилища: `.obsidian/plugins/` (в итоге у вас должна получиться папка `.obsidian/plugins/mailru-cloud-sync/` с файлами плагина внутри).
 3. Перезапустите Obsidian (или нажмите `Ctrl + R`), откройте **Настройки** → **Сторонние плагины** и включите **Mail.ru Cloud Sync**.
