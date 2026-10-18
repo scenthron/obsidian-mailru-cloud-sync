@@ -423,3 +423,50 @@
 	font-weight: 500;
 	color: var(--text-normal);
 }
+
+/* Адаптивная вёрстка кнопок в настройках (экспорт/импорт, авторизация) */
+.mailru-buttons-setting .setting-item-control {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px;
+	justify-content: flex-end;
+}
+
+.mailru-buttons-setting .setting-item-control button {
+	white-space: normal;
+	text-align: center;
+}
+
+/* Мобильный вид (Android, iOS и узкие экраны) */
+.is-mobile .mailru-buttons-setting .setting-item-control,
+.is-phone .mailru-buttons-setting .setting-item-control {
+	width: 100%;
+	flex-direction: column;
+	align-items: stretch;
+	gap: 8px;
+}
+
+.is-mobile .mailru-buttons-setting .setting-item-control button,
+.is-phone .mailru-buttons-setting .setting-item-control button {
+	width: 100%;
+	margin: 0;
+	text-align: center;
+	justify-content: center;
+}
+
+@media (max-width: 600px) {
+	.mailru-buttons-setting .setting-item-control {
+		width: 100%;
+		flex-direction: column;
+		align-items: stretch;
+		gap: 8px;
+	}
+
+	.mailru-buttons-setting .setting-item-control button {
+		width: 100%;
+		margin: 0;
+		text-align: center;
+		justify-content: center;
+	}
+}
+

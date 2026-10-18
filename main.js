@@ -35,7 +35,7 @@ var DEFAULT_SETTINGS = {
   appPassword: "",
   remotePath: "/ObsidianVault",
   syncDirection: "bidirectional" /* Bidirectional */,
-  conflictStrategy: "ask" /* Ask */,
+  conflictStrategy: "newer_wins" /* NewerWins */,
   autoSyncSeconds: 30,
   excludePatterns: [
     ".trash/**"
@@ -2840,6 +2840,7 @@ var YaDiskSyncSettingTab = class extends import_obsidian6.PluginSettingTab {
 
     const checkSetting = new import_obsidian6.Setting(containerEl)
       .setName(t("auth.status.name"));
+    checkSetting.settingEl.addClass("mailru-buttons-setting");
 
     if (this.lastCheckError) {
       checkSetting.setDesc(createFragment((el) => {
@@ -3290,6 +3291,7 @@ var YaDiskSyncSettingTab = class extends import_obsidian6.PluginSettingTab {
     const transferSetting = new import_obsidian6.Setting(containerEl)
       .setName(t("transfer.setting.name"))
       .setDesc(t("transfer.setting.desc"));
+    transferSetting.settingEl.addClass("mailru-buttons-setting");
 
     transferSetting.addButton((btn) => {
       btn.setButtonText(t("transfer.exportBtn")).onClick(() => {
