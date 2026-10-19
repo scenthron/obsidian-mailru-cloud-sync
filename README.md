@@ -8,6 +8,10 @@ An [Obsidian](https://obsidian.md) plugin for synchronizing your vault notes and
 
 > 💡 *This project is built upon the open-source [Yandex Disk Sync](https://github.com/Nikolay-Eltsov/obsidian-yadisk-sync) plugin by [Nikolay Eltsov](https://github.com/Nikolay-Eltsov), adapted for Mail.ru Cloud WebDAV protocol, and extended with AES-256-GCM End-to-End Encryption and encrypted link configuration transfer.*
 
+> [!WARNING]
+> **Important: Back up your vault!**  
+> Before configuring and running synchronization for the first time, we strongly recommend creating a full backup of your Obsidian Vault. This is a standard precaution when working with cloud synchronization to avoid accidental note loss due to version conflicts or misconfiguration.
+
 ---
 
 ## 🌟 Key Features

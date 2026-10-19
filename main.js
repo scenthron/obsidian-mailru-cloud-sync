@@ -65,6 +65,8 @@ var en = {
   "language.name": "Language",
   "language.desc": "Language of the plugin's settings and sync queue.",
   "language.auto": "Same as Obsidian",
+  "warning.backup.title": "Recommended: Back up your vault",
+  "warning.backup.desc": "Before configuring and starting synchronization for the first time, we strongly recommend creating a full backup copy of your Obsidian Vault. This will prevent accidental note loss in case of version conflicts or misconfiguration.",
   "auth.heading": "Authorization",
   "auth.signIn": "Sign in",
   "auth.signInDesc": "Click the button, authorize in the browser, and copy the code",
@@ -356,6 +358,8 @@ var ru = {
   "language.name": "\u042F\u0437\u044B\u043A",
   "language.desc": "\u042F\u0437\u044B\u043A \u043D\u0430\u0441\u0442\u0440\u043E\u0435\u043A \u043F\u043B\u0430\u0433\u0438\u043D\u0430 \u0438 \u043E\u0447\u0435\u0440\u0435\u0434\u0438 \u0441\u0438\u043D\u0445\u0440\u043E\u043D\u0438\u0437\u0430\u0446\u0438\u0438.",
   "language.auto": "\u041A\u0430\u043A \u0432 Obsidian",
+  "warning.backup.title": "\u0420\u0435\u043A\u043E\u043C\u0435\u043D\u0434\u0430\u0446\u0438\u044F: \u0441\u0434\u0435\u043B\u0430\u0439\u0442\u0435 \u0440\u0435\u0437\u0435\u0440\u0432\u043D\u0443\u044E \u043A\u043E\u043F\u0438\u044E",
+  "warning.backup.desc": "\u041F\u0435\u0440\u0435\u0434 \u043F\u0435\u0440\u0432\u043E\u0439 \u043D\u0430\u0441\u0442\u0440\u043E\u0439\u043A\u043E\u0439 \u0438 \u0437\u0430\u043F\u0443\u0441\u043A\u043E\u043C \u0441\u0438\u043D\u0445\u0440\u043E\u043D\u0438\u0437\u0430\u0446\u0438\u0438 \u043D\u0430\u0441\u0442\u043E\u044F\u0442\u0435\u043B\u044C\u043D\u043E \u0440\u0435\u043A\u043E\u043C\u0435\u043D\u0434\u0443\u0435\u043C \u0441\u043E\u0437\u0434\u0430\u0442\u044C \u043F\u043E\u043B\u043D\u0443\u044E \u0440\u0435\u0437\u0435\u0440\u0432\u043D\u0443\u044E \u043A\u043E\u043F\u0438\u044E \u0432\u0430\u0448\u0435\u0433\u043E \u0445\u0440\u0430\u043D\u0438\u043B\u0438\u0449\u0430 (Obsidian Vault). \u042D\u0442\u043E \u043F\u043E\u0437\u0432\u043E\u043B\u0438\u0442 \u0438\u0437\u0431\u0435\u0436\u0430\u0442\u044C \u0441\u043B\u0443\u0447\u0430\u0439\u043D\u043E\u0439 \u043F\u043E\u0442\u0435\u0440\u0438 \u0434\u0430\u043D\u043D\u044B\u0445 \u0432 \u0441\u043B\u0443\u0447\u0430\u0435 \u043A\u043E\u043D\u0444\u043B\u0438\u043A\u0442\u043E\u0432 \u0432\u0435\u0440\u0441\u0438\u0439 \u0438\u043B\u0438 \u043E\u0448\u0438\u0431\u043E\u043A \u043D\u0430\u0441\u0442\u0440\u043E\u0439\u043A\u0438.",
   "auth.heading": "\u0410\u0432\u0442\u043E\u0440\u0438\u0437\u0430\u0446\u0438\u044F",
   "auth.signIn": "\u0412\u043E\u0439\u0442\u0438",
   "auth.signInDesc": "\u041D\u0430\u0436\u043C\u0438\u0442\u0435 \u043A\u043D\u043E\u043F\u043A\u0443, \u0430\u0432\u0442\u043E\u0440\u0438\u0437\u0443\u0439\u0442\u0435\u0441\u044C \u0432 \u0431\u0440\u0430\u0443\u0437\u0435\u0440\u0435 \u0438 \u0441\u043A\u043E\u043F\u0438\u0440\u0443\u0439\u0442\u0435 \u043A\u043E\u0434",
@@ -2803,6 +2807,13 @@ var YaDiskSyncSettingTab = class extends import_obsidian6.PluginSettingTab {
         this.plugin.queue.notify();
       })
     );
+
+    const warnContainer = containerEl.createDiv({ cls: "mailru-backup-warning" });
+    const warnHeader = warnContainer.createDiv({ cls: "mailru-backup-warning-title" });
+    (0, import_obsidian6.setIcon)(warnHeader.createSpan({ cls: "mailru-backup-warning-icon" }), "alert-triangle");
+    warnHeader.createSpan({ text: t("warning.backup.title") });
+    warnContainer.createDiv({ cls: "mailru-backup-warning-desc", text: t("warning.backup.desc") });
+
     new import_obsidian6.Setting(containerEl).setName(t("auth.heading")).setHeading();
     const isAuthorized = !!(this.plugin.settings.email && this.plugin.settings.appPassword);
 

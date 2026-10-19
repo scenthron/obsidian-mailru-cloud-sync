@@ -525,3 +525,40 @@
 	}
 }
 
+/* Блок предупреждения о резервной копии перед настройкой */
+.mailru-backup-warning {
+	margin: 16px 0 20px 0;
+	padding: 12px 14px;
+	border-radius: 6px;
+	border-left: 4px solid var(--text-warning, #e6a23c);
+	background-color: var(--background-secondary);
+}
+
+.mailru-backup-warning-title {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	font-weight: 600;
+	font-size: 0.95em;
+	color: var(--text-warning, #e6a23c);
+	margin-bottom: 6px;
+}
+
+.mailru-backup-warning-icon {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.mailru-backup-warning-icon svg {
+	width: 18px;
+	height: 18px;
+}
+
+.mailru-backup-warning-desc {
+	font-size: 0.85em;
+	line-height: 1.45;
+	color: var(--text-muted);
+}
+
+
