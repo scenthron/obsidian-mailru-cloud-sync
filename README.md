@@ -79,7 +79,8 @@ For secure WebDAV access, Mail.ru requires creating a dedicated application pass
 1. Open Mail.ru security settings: [Application Passwords](https://account.mail.ru/user/2-step-auth/passwords).
 2. Click **Add password** (or "Create").
 3. Enter a label, for example: `Obsidian Sync`.
-4. Immediately copy and save the generated 16-character password: it cannot be viewed again in Mail.ru — you can only delete it and generate a new one.
+4. In the list of application protocol types, select **`WebDAV`**.
+5. Immediately copy and save the generated 16-character password: it cannot be viewed again in Mail.ru — you can only delete it and generate a new one.
 
 ### 2. Configuring the Plugin in Obsidian
 1. Open **Obsidian Settings** → **Mail.ru Cloud Sync**.
