@@ -18,7 +18,8 @@ An [Obsidian](https://obsidian.md) plugin for synchronizing your vault notes and
 
 - 🚀 **Direct WebDAV Synchronization**: Connects directly to official Mail.ru Cloud servers without third-party proxies.
 - 🔐 **End-to-End Encryption (AES-256-GCM)**: Protects the contents of notes and attachments before uploading to the cloud.
-  - Files are encrypted before uploading to the Cloud using AES-256-GCM with key derivation via PBKDF2 (SHA-256, 100,000 iterations).
+  - **Complete Privacy**: Files cannot be read, indexed, or analyzed by automated algorithms or anyone gaining access to the cloud storage.
+  - **All File Types Encrypted**: Securely encrypts file contents across all formats (Markdown notes `.md`, images, audio, PDF, attachments) using AES-256-GCM with PBKDF2 key derivation (SHA-256, 100,000 iterations).
   - Folder structure and file names remain intact for reliable synchronization.
   - Local files on your devices remain unencrypted in their original state.
   - **Fail-Fast Encrypted Vault Guard**: If encrypted files are detected in the cloud while the local secret passphrase is not set or encryption is disabled, synchronization stops immediately to protect the local vault from corruption. Sync resumes once encryption settings are configured on this device.
